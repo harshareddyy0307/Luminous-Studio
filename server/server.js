@@ -7,8 +7,6 @@ const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
 
-const { createClient } = require('@supabase/supabase-js');
-
 const app = express();
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'luminosbook_secret_2024';
@@ -22,127 +20,71 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// ─── JSON File Database & Supabase Cloud Sync ─────────────────────────────────
+// ─── Database Setup (PostgreSQL with Neon Cloud Sync & Local Fallback) ──────
+const { Pool } = require('pg');
 const DB_DIR = path.join(__dirname, 'db');
 if (!fs.existsSync(DB_DIR)) fs.mkdirSync(DB_DIR);
 
 const dbFile = (name) => path.join(DB_DIR, `${name}.json`);
 
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_KEY = process.env.SUPABASE_KEY;
-const BUCKET_NAME = 'luminous-db';
+let memoryDB = {};
+let pool = null;
 
-let supabase = null;
-if (SUPABASE_URL && SUPABASE_KEY) {
-  supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-  console.log('⚡ Supabase configuration found. Storage database backup enabled.');
+if (process.env.DATABASE_URL) {
+  pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
+  });
+  console.log('🔌 Connected to Neon PostgreSQL database.');
 } else {
-  console.log('⚠️ No Supabase configuration found. Running database locally only.');
+  console.log('📁 Using local JSON files only (no DATABASE_URL provided).');
 }
 
-const DB_NAMES = [
-  'users',
-  'services',
-  'images',
-  'bookings',
-  'loginHistory',
-  'subscribers',
-  'leads',
-  'expenses',
-  'employees',
-  'blogs',
-  'affiliates',
-  'contracts',
-  'giftcards'
-];
+const initDatabase = async () => {
+  const tableNames = [
+    'users', 'services', 'images', 'bookings', 'loginHistory',
+    'subscribers', 'leads', 'expenses', 'employees', 'blogs',
+    'affiliates', 'contracts', 'giftcards'
+  ];
 
-// Helper to download a database file from Supabase
-const downloadFromSupabase = async (name) => {
-  if (!supabase) return false;
-  try {
-    const { data, error } = await supabase.storage
-      .from(BUCKET_NAME)
-      .download(`${name}.json`);
+  if (pool) {
+    try {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS json_databases (
+          name VARCHAR(255) PRIMARY KEY,
+          data JSONB NOT NULL,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+      console.log('✅ Neon Table json_databases verified/created.');
 
-    if (error) {
-      if (error.message.includes('Object not found') || error.status === 404) {
-        return false;
+      for (const name of tableNames) {
+        const res = await pool.query('SELECT data FROM json_databases WHERE name = $1', [name]);
+        if (res.rows.length > 0) {
+          memoryDB[name] = res.rows[0].data;
+        } else {
+          const localData = readLocalDB(name);
+          memoryDB[name] = localData;
+          await pool.query(
+            'INSERT INTO json_databases (name, data, updated_at) VALUES ($1, $2, NOW()) ON CONFLICT (name) DO UPDATE SET data = $2, updated_at = NOW()',
+            [name, JSON.stringify(localData)]
+          );
+        }
       }
-      console.error(`❌ Error downloading ${name}.json from Supabase:`, error.message);
-      return false;
-    }
-
-    if (data) {
-      const text = await data.text();
-      fs.writeFileSync(dbFile(name), text, 'utf8');
-      console.log(`⬇️ Downloaded and restored ${name}.json from Supabase.`);
-      return true;
-    }
-  } catch (err) {
-    console.error(`❌ Unexpected error downloading ${name} from Supabase:`, err.message);
-  }
-  return false;
-};
-
-// Helper to upload a database file to Supabase
-const uploadToSupabase = async (name) => {
-  if (!supabase) return;
-  try {
-    const filePath = dbFile(name);
-    if (!fs.existsSync(filePath)) return;
-    const fileBuffer = fs.readFileSync(filePath);
-    
-    const { error } = await supabase.storage
-      .from(BUCKET_NAME)
-      .upload(`${name}.json`, fileBuffer, {
-        contentType: 'application/json',
-        upsert: true
-      });
-
-    if (error) {
-      console.error(`❌ Error uploading backup for ${name} to Supabase:`, error.message);
-    } else {
-      console.log(`☁️ Successfully backed up ${name}.json to Supabase.`);
-    }
-  } catch (err) {
-    console.error(`❌ Unexpected error backing up ${name}:`, err.message);
-  }
-};
-
-const syncDatabaseFromSupabase = async () => {
-  if (!supabase) return;
-  console.log('🔄 Checking and downloading database files from Supabase Storage...');
-  try {
-    const { data: buckets, error: listError } = await supabase.storage.listBuckets();
-    if (listError) {
-      console.error('❌ Error listing Supabase Storage buckets:', listError.message);
+      console.log('✅ All database tables loaded from Neon.');
       return;
+    } catch (err) {
+      console.error('❌ Failed to load from Neon Postgres, falling back to local files:', err);
     }
-    
-    const exists = buckets.some(b => b.name === BUCKET_NAME);
-    if (!exists) {
-      console.log(`📦 Creating private Supabase Storage bucket: "${BUCKET_NAME}"...`);
-      const { error: createError } = await supabase.storage.createBucket(BUCKET_NAME, {
-        public: false,
-        fileSizeLimit: 10485760 // 10MB
-      });
-      if (createError) {
-        console.error('❌ Error creating bucket:', createError.message);
-        return;
-      }
-      console.log(`✅ Private bucket "${BUCKET_NAME}" created successfully.`);
-    }
-
-    for (const name of DB_NAMES) {
-      await downloadFromSupabase(name);
-    }
-    console.log('✅ Supabase database restoration completed.');
-  } catch (err) {
-    console.error('❌ Unexpected error in syncDatabaseFromSupabase:', err.message);
   }
+
+  for (const name of tableNames) {
+    memoryDB[name] = readLocalDB(name);
+  }
+  console.log('✅ All database tables loaded from local JSON files.');
 };
 
-const readDB = (name) => {
+const readLocalDB = (name) => {
   try {
     const f = dbFile(name);
     if (!fs.existsSync(f)) return [];
@@ -150,11 +92,24 @@ const readDB = (name) => {
   } catch { return []; }
 };
 
+const readDB = (name) => {
+  return memoryDB[name] || [];
+};
+
 const writeDB = (name, data) => {
-  fs.writeFileSync(dbFile(name), JSON.stringify(data, null, 2));
-  if (supabase) {
-    uploadToSupabase(name).catch(err => {
-      console.error(`❌ Background upload error for ${name}:`, err.message);
+  memoryDB[name] = data;
+  try {
+    fs.writeFileSync(dbFile(name), JSON.stringify(data, null, 2));
+  } catch (err) {
+    console.error(`Failed to write local backup for ${name}:`, err);
+  }
+
+  if (pool) {
+    pool.query(
+      'INSERT INTO json_databases (name, data, updated_at) VALUES ($1, $2, NOW()) ON CONFLICT (name) DO UPDATE SET data = $2, updated_at = NOW()',
+      [name, JSON.stringify(data)]
+    ).catch(err => {
+      console.error(`❌ Neon sync error for table ${name}:`, err.message);
     });
   }
 };
@@ -806,21 +761,21 @@ app.post('/api/admin/ai-writer', protect, (req, res) => {
 });
 
 // ─── Health ────────────────────────────────────────────────────────────────────
-app.get('/api/health', (req, res) => res.json({ status: 'ok', db: 'json-file', timestamp: new Date().toISOString() }));
+app.get('/api/health', (req, res) => res.json({ status: 'ok', db: pool ? 'neon-postgres' : 'json-file', timestamp: new Date().toISOString() }));
 
 // ─── Start ─────────────────────────────────────────────────────────────────────
-const init = async () => {
-  await syncDatabaseFromSupabase();
-  await seedIfEmpty();
-};
-
-init().then(() => {
-  app.listen(PORT, () => {
-    console.log('');
-    console.log('🚀 LuminosBook Server running!');
-    console.log(`   API: http://localhost:${PORT}/api`);
-    console.log(`   DB:  JSON file store (server/db/) with Supabase Cloud Sync`);
-    console.log(`   Admin login: admin / Admin@123`);
-    console.log('');
+initDatabase()
+  .then(() => seedIfEmpty())
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log('');
+      console.log('🚀 LuminosBook Server running!');
+      console.log(`   API: http://localhost:${PORT}/api`);
+      console.log(`   DB:  ${pool ? 'Neon PostgreSQL' : 'JSON file store'}`);
+      console.log(`   Admin login: admin / Admin@123`);
+      console.log('');
+    });
+  })
+  .catch(err => {
+    console.error('❌ Server failed to initialize:', err);
   });
-});
