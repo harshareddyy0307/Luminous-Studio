@@ -7,6 +7,8 @@ const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
 
+const { createClient } = require('@supabase/supabase-js');
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'luminosbook_secret_2024';
@@ -20,11 +22,125 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// ─── JSON File Database ────────────────────────────────────────────────────────
+// ─── JSON File Database & Supabase Cloud Sync ─────────────────────────────────
 const DB_DIR = path.join(__dirname, 'db');
 if (!fs.existsSync(DB_DIR)) fs.mkdirSync(DB_DIR);
 
 const dbFile = (name) => path.join(DB_DIR, `${name}.json`);
+
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_KEY;
+const BUCKET_NAME = 'luminous-db';
+
+let supabase = null;
+if (SUPABASE_URL && SUPABASE_KEY) {
+  supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+  console.log('⚡ Supabase configuration found. Storage database backup enabled.');
+} else {
+  console.log('⚠️ No Supabase configuration found. Running database locally only.');
+}
+
+const DB_NAMES = [
+  'users',
+  'services',
+  'images',
+  'bookings',
+  'loginHistory',
+  'subscribers',
+  'leads',
+  'expenses',
+  'employees',
+  'blogs',
+  'affiliates',
+  'contracts',
+  'giftcards'
+];
+
+// Helper to download a database file from Supabase
+const downloadFromSupabase = async (name) => {
+  if (!supabase) return false;
+  try {
+    const { data, error } = await supabase.storage
+      .from(BUCKET_NAME)
+      .download(`${name}.json`);
+
+    if (error) {
+      if (error.message.includes('Object not found') || error.status === 404) {
+        return false;
+      }
+      console.error(`❌ Error downloading ${name}.json from Supabase:`, error.message);
+      return false;
+    }
+
+    if (data) {
+      const text = await data.text();
+      fs.writeFileSync(dbFile(name), text, 'utf8');
+      console.log(`⬇️ Downloaded and restored ${name}.json from Supabase.`);
+      return true;
+    }
+  } catch (err) {
+    console.error(`❌ Unexpected error downloading ${name} from Supabase:`, err.message);
+  }
+  return false;
+};
+
+// Helper to upload a database file to Supabase
+const uploadToSupabase = async (name) => {
+  if (!supabase) return;
+  try {
+    const filePath = dbFile(name);
+    if (!fs.existsSync(filePath)) return;
+    const fileBuffer = fs.readFileSync(filePath);
+    
+    const { error } = await supabase.storage
+      .from(BUCKET_NAME)
+      .upload(`${name}.json`, fileBuffer, {
+        contentType: 'application/json',
+        upsert: true
+      });
+
+    if (error) {
+      console.error(`❌ Error uploading backup for ${name} to Supabase:`, error.message);
+    } else {
+      console.log(`☁️ Successfully backed up ${name}.json to Supabase.`);
+    }
+  } catch (err) {
+    console.error(`❌ Unexpected error backing up ${name}:`, err.message);
+  }
+};
+
+const syncDatabaseFromSupabase = async () => {
+  if (!supabase) return;
+  console.log('🔄 Checking and downloading database files from Supabase Storage...');
+  try {
+    const { data: buckets, error: listError } = await supabase.storage.listBuckets();
+    if (listError) {
+      console.error('❌ Error listing Supabase Storage buckets:', listError.message);
+      return;
+    }
+    
+    const exists = buckets.some(b => b.name === BUCKET_NAME);
+    if (!exists) {
+      console.log(`📦 Creating private Supabase Storage bucket: "${BUCKET_NAME}"...`);
+      const { error: createError } = await supabase.storage.createBucket(BUCKET_NAME, {
+        public: false,
+        fileSizeLimit: 10485760 // 10MB
+      });
+      if (createError) {
+        console.error('❌ Error creating bucket:', createError.message);
+        return;
+      }
+      console.log(`✅ Private bucket "${BUCKET_NAME}" created successfully.`);
+    }
+
+    for (const name of DB_NAMES) {
+      await downloadFromSupabase(name);
+    }
+    console.log('✅ Supabase database restoration completed.');
+  } catch (err) {
+    console.error('❌ Unexpected error in syncDatabaseFromSupabase:', err.message);
+  }
+};
 
 const readDB = (name) => {
   try {
@@ -36,6 +152,11 @@ const readDB = (name) => {
 
 const writeDB = (name, data) => {
   fs.writeFileSync(dbFile(name), JSON.stringify(data, null, 2));
+  if (supabase) {
+    uploadToSupabase(name).catch(err => {
+      console.error(`❌ Background upload error for ${name}:`, err.message);
+    });
+  }
 };
 
 const genId = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -688,12 +809,17 @@ app.post('/api/admin/ai-writer', protect, (req, res) => {
 app.get('/api/health', (req, res) => res.json({ status: 'ok', db: 'json-file', timestamp: new Date().toISOString() }));
 
 // ─── Start ─────────────────────────────────────────────────────────────────────
-seedIfEmpty().then(() => {
+const init = async () => {
+  await syncDatabaseFromSupabase();
+  await seedIfEmpty();
+};
+
+init().then(() => {
   app.listen(PORT, () => {
     console.log('');
     console.log('🚀 LuminosBook Server running!');
     console.log(`   API: http://localhost:${PORT}/api`);
-    console.log(`   DB:  JSON file store (server/db/)`);
+    console.log(`   DB:  JSON file store (server/db/) with Supabase Cloud Sync`);
     console.log(`   Admin login: admin / Admin@123`);
     console.log('');
   });
