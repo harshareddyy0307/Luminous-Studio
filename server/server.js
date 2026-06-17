@@ -41,6 +41,60 @@ if (process.env.DATABASE_URL) {
   console.log('📁 Using local JSON files only (no DATABASE_URL provided).');
 }
 
+const getPgType = (key, val) => {
+  if (key === '_id') return 'VARCHAR(255) PRIMARY KEY';
+  if (typeof val === 'number') return 'NUMERIC';
+  if (typeof val === 'boolean') return 'BOOLEAN';
+  if (Array.isArray(val)) return 'JSONB';
+  if (typeof val === 'object' && val !== null) return 'JSONB';
+  return 'TEXT';
+};
+
+const syncToNativeTable = async (name, data) => {
+  if (!pool) return;
+  try {
+    if (!data || data.length === 0) {
+      await pool.query(`DROP TABLE IF EXISTS "${name}"`);
+      await pool.query(`CREATE TABLE IF NOT EXISTS "${name}" (_id VARCHAR(255) PRIMARY KEY, data JSONB)`);
+      return;
+    }
+
+    const sample = data[0];
+    await pool.query(`DROP TABLE IF EXISTS "${name}"`);
+
+    const columns = Object.keys(sample).map(key => {
+      return `"${key}" ${getPgType(key, sample[key])}`;
+    });
+    const createQuery = `CREATE TABLE IF NOT EXISTS "${name}" (${columns.join(', ')})`;
+    await pool.query(createQuery);
+
+    const cols = Object.keys(sample);
+    for (const row of data) {
+      const colNames = [];
+      const colValues = [];
+      const colPlaceholders = [];
+
+      cols.forEach((col, idx) => {
+        colNames.push(`"${col}"`);
+        let val = row[col];
+        if (val === undefined) val = null;
+
+        if (Array.isArray(val) || (typeof val === 'object' && val !== null)) {
+          colValues.push(JSON.stringify(val));
+        } else {
+          colValues.push(val);
+        }
+        colPlaceholders.push(`$${idx + 1}`);
+      });
+
+      const queryText = `INSERT INTO "${name}" (${colNames.join(', ')}) VALUES (${colPlaceholders.join(', ')})`;
+      await pool.query(queryText, colValues);
+    }
+  } catch (err) {
+    console.error(`❌ Background native table sync error for ${name}:`, err.message);
+  }
+};
+
 const initDatabase = async () => {
   const tableNames = [
     'users', 'services', 'images', 'bookings', 'loginHistory',
@@ -71,6 +125,8 @@ const initDatabase = async () => {
             [name, JSON.stringify(localData)]
           );
         }
+        // Sync to native SQL tables in the background on startup
+        syncToNativeTable(name, memoryDB[name]).catch(() => {});
       }
       console.log('✅ All database tables loaded from Neon.');
       return;
@@ -109,7 +165,12 @@ const writeDB = (name, data) => {
     pool.query(
       'INSERT INTO json_databases (name, data, updated_at) VALUES ($1, $2, NOW()) ON CONFLICT (name) DO UPDATE SET data = $2, updated_at = NOW()',
       [name, JSON.stringify(data)]
-    ).catch(err => {
+    )
+    .then(() => {
+      // Async sync to native table in database
+      return syncToNativeTable(name, data);
+    })
+    .catch(err => {
       console.error(`❌ Neon sync error for table ${name}:`, err.message);
     });
   }
