@@ -119,10 +119,18 @@ const genId = () => Math.random().toString(36).slice(2) + Date.now().toString(36
 // ─── Seed Initial Data ─────────────────────────────────────────────────────────
 const seedIfEmpty = async () => {
   // Admin user
-  if (readDB('users').length === 0) {
+  const usersList = readDB('users');
+  if (!usersList.some(u => u.username.toLowerCase() === 'admin')) {
     const hashed = await bcrypt.hash('Admin@123', 12);
-    writeDB('users', [{ _id: genId(), username: 'admin', password: hashed, createdAt: new Date().toISOString() }]);
-    console.log('✅ Admin user seeded: admin / Admin@123');
+    usersList.push({
+      _id: genId(),
+      username: 'admin',
+      password: hashed,
+      role: 'admin',
+      createdAt: new Date().toISOString()
+    });
+    writeDB('users', usersList);
+    console.log('✅ Default admin user seeded: admin / Admin@123');
   }
 
   // Services
