@@ -302,19 +302,7 @@ app.post('/api/auth/login', async (req, res) => {
     writeDB('loginHistory', history.slice(0, 100));
 
     const role = user.role || 'admin';
-    if (role === 'admin') {
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
-      tempOTPs[user.username] = {
-        otp,
-        user: { id: user._id, username: user.username, role }
-      };
-      console.log(`\n==============================================`);
-      console.log(`[SECURITY] 2FA OTP Code for admin: ${otp}`);
-      console.log(`==============================================\n`);
-      return res.json({ require2FA: true, username: user.username });
-    }
-
-    // Customer login bypasses 2FA
+    // 2FA OTP requirement is disabled for easy remote/multi-device access
     const token = jwt.sign({ id: user._id, username: user.username, role }, JWT_SECRET, { expiresIn: '7d' });
     res.json({ token, username: user.username, role });
   } catch (err) { res.status(500).json({ message: err.message }); }
