@@ -1,0 +1,119 @@
+[
+  {
+    "_id": "oyf55v48kdmqfdqudv",
+    "title": "snap",
+    "category": "wedding",
+    "cloudinaryUrl": "http://localhost:5000/uploads/cu7llsr919lmqfdqud6.png",
+    "publicId": "cu7llsr919lmqfdqud6.png",
+    "featured": false,
+    "createdAt": "2026-06-15T15:40:30.931Z"
+  },
+  {
+    "_id": "u5t3oqfns8mqfdlvzi",
+    "title": "Golden Hour Wedding",
+    "category": "wedding",
+    "cloudinaryUrl": "https://images.unsplash.com/photo-1519741497674-611481863552?w=1200",
+    "publicId": "demo-1",
+    "featured": true,
+    "createdAt": "2026-06-15T15:36:39.726Z"
+  },
+  {
+    "_id": "rw3xr7wmmjomqfdlvzi",
+    "title": "Bridal Portrait",
+    "category": "wedding",
+    "cloudinaryUrl": "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=1200",
+    "publicId": "demo-2",
+    "featured": true,
+    "createdAt": "2026-06-15T15:36:39.726Z"
+  },
+  {
+    "_id": "kez2flk2o1mqfdlvzi",
+    "title": "Wedding Reception",
+    "category": "wedding",
+    "cloudinaryUrl": "https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=1200",
+    "publicId": "demo-3",
+    "featured": false,
+    "createdAt": "2026-06-15T15:36:39.726Z"
+  },
+  {
+    "_id": "v0q69e7nietmqfdlvzi",
+    "title": "Couple in Garden",
+    "category": "wedding",
+    "cloudinaryUrl": "https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=1200",
+    "publicId": "demo-4",
+    "featured": false,
+    "createdAt": "2026-06-15T15:36:39.726Z"
+  },
+  {
+    "_id": "nbddbbps2mqmqfdlvzi",
+    "title": "Birthday Cake Moment",
+    "category": "birthday",
+    "cloudinaryUrl": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200",
+    "publicId": "demo-5",
+    "featured": true,
+    "createdAt": "2026-06-15T15:36:39.726Z"
+  },
+  {
+    "_id": "matqht2schjmqfdlvzi",
+    "title": "Birthday Celebration",
+    "category": "birthday",
+    "cloudinaryUrl": "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=1200",
+    "publicId": "demo-6",
+    "featured": false,
+    "createdAt": "2026-06-15T15:36:39.726Z"
+  },
+  {
+    "_id": "nik8ysonc7mqfdlvzi",
+    "title": "Kids Birthday Party",
+    "category": "birthday",
+    "cloudinaryUrl": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=1200",
+    "publicId": "demo-7",
+    "featured": false,
+    "createdAt": "2026-06-15T15:36:39.726Z"
+  },
+  {
+    "_id": "k9vwmlszgemqfdlvzi",
+    "title": "Corporate Conference",
+    "category": "corporate",
+    "cloudinaryUrl": "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200",
+    "publicId": "demo-8",
+    "featured": true,
+    "createdAt": "2026-06-15T15:36:39.726Z"
+  },
+  {
+    "_id": "i50f2hu576hmqfdlvzi",
+    "title": "Business Team Photo",
+    "category": "corporate",
+    "cloudinaryUrl": "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1200",
+    "publicId": "demo-9",
+    "featured": false,
+    "createdAt": "2026-06-15T15:36:39.726Z"
+  },
+  {
+    "_id": "ib2qi6ayzigmqfdlvzi",
+    "title": "Product Launch Event",
+    "category": "corporate",
+    "cloudinaryUrl": "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=1200",
+    "publicId": "demo-10",
+    "featured": false,
+    "createdAt": "2026-06-15T15:36:39.726Z"
+  },
+  {
+    "_id": "k68y373pn77mqfdlvzi",
+    "title": "Award Ceremony",
+    "category": "corporate",
+    "cloudinaryUrl": "https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200",
+    "publicId": "demo-11",
+    "featured": false,
+    "createdAt": "2026-06-15T15:36:39.726Z"
+  },
+  {
+    "_id": "r6i7o3eplxfmqfdlvzi",
+    "title": "Romantic Pre-Wedding",
+    "category": "wedding",
+    "cloudinaryUrl": "https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=1200",
+    "publicId": "demo-12",
+    "featured": false,
+    "createdAt": "2026-06-15T15:36:39.726Z"
+  }
+]

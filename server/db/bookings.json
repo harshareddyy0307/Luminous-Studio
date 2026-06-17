@@ -1,0 +1,161 @@
+[
+  {
+    "_id": "r4a1micwjfomqhp75vu",
+    "customerName": "Harshavardhan Reddy Veerupaka",
+    "email": "harshareddyy0307@gmail.com",
+    "phone": "07989856610",
+    "eventDate": "2026-06-18",
+    "eventType": "Wedding",
+    "notes": "",
+    "services": [
+      {
+        "serviceId": "rd18xkycmxmqfdlvzg",
+        "name": "Wedding Cinematic Video",
+        "price": 35000
+      }
+    ],
+    "totalAmount": 35000,
+    "status": "confirmed",
+    "bookingReference": "LB-MQHP75VU",
+    "createdAt": "2026-06-17T06:36:40.458Z"
+  },
+  {
+    "_id": "k4z3iepiedqmqfnpfgp",
+    "customerName": "Harshavardhan Reddy Veerupaka",
+    "email": "harshareddyy0307@gmail.com",
+    "phone": "07989856610",
+    "eventDate": "2026-06-20",
+    "eventType": "Wedding",
+    "notes": "",
+    "services": [
+      {
+        "serviceId": "h19uff0phmqfdlvzg",
+        "name": "Wedding Photography",
+        "price": 45000
+      }
+    ],
+    "totalAmount": 45000,
+    "status": "pending",
+    "bookingReference": "LB-MQFNPFGP",
+    "createdAt": "2026-06-15T20:19:21.097Z"
+  },
+  {
+    "_id": "e0f3l1lkqkbmqfmnbgx",
+    "customerName": "Harshavardhan Reddy Veerupaka",
+    "email": "harshareddyy0307@gmail.com",
+    "phone": "07989856610",
+    "eventDate": "2026-06-27",
+    "eventType": "",
+    "notes": "",
+    "services": [
+      {
+        "serviceId": "kya7letih0dmqfdlvzg",
+        "name": "Birthday Celebration Package",
+        "price": 15000
+      },
+      {
+        "serviceId": "h19uff0phmqfdlvzg",
+        "name": "Wedding Photography",
+        "price": 45000
+      }
+    ],
+    "totalAmount": 60000,
+    "status": "pending",
+    "bookingReference": "LB-MQFMNBGX",
+    "createdAt": "2026-06-15T19:49:42.993Z"
+  },
+  {
+    "_id": "r8n5fgpiuwmqfl3g0d",
+    "customerName": "hbjmh",
+    "email": "robouser2007@gmail.com",
+    "phone": "7989856610",
+    "eventDate": "2026-07-09",
+    "eventType": "Corporate Event",
+    "notes": "",
+    "services": [],
+    "totalAmount": 0,
+    "status": "confirmed",
+    "bookingReference": "LB-MQFL3G0D",
+    "createdAt": "2026-06-15T19:06:16.141Z"
+  },
+  {
+    "_id": "762ut8tzk8vmqfkv2ya",
+    "customerName": "hgch",
+    "email": "robouser2007@gmail.com",
+    "phone": "07989856610",
+    "eventDate": "2026-06-23",
+    "eventType": "Corporate Event",
+    "notes": "",
+    "services": [
+      {
+        "serviceId": "rd18xkycmxmqfdlvzg",
+        "name": "Wedding Cinematic Video",
+        "price": 35000
+      }
+    ],
+    "totalAmount": 35000,
+    "status": "pending",
+    "bookingReference": "LB-MQFKV2YA",
+    "createdAt": "2026-06-15T18:59:45.970Z"
+  },
+  {
+    "_id": "2iqktzt5kzzmqff0ioq",
+    "customerName": "Harsha Reddy",
+    "email": "harshareddyy0307@gmail.com",
+    "phone": "07989856610",
+    "eventDate": "2026-06-23",
+    "eventType": "Corporate Event",
+    "notes": "",
+    "services": [
+      {
+        "serviceId": "fuuigct4vxlmqfdlvzg",
+        "name": "Corporate Event Coverage",
+        "price": 25000
+      }
+    ],
+    "totalAmount": 25000,
+    "status": "pending",
+    "bookingReference": "LB-MQFF0IOQ",
+    "createdAt": "2026-06-15T16:16:01.946Z"
+  },
+  {
+    "_id": "1xz0gmuwwv4mqfdv2uh",
+    "customerName": "Harshavardhan Reddy Veerupaka",
+    "email": "harshareddyy0307@gmail.com",
+    "phone": "07989856610",
+    "eventDate": "2026-06-16",
+    "eventType": "Birthday",
+    "notes": "",
+    "services": [
+      {
+        "serviceId": "kya7letih0dmqfdlvzg",
+        "name": "Birthday Celebration Package",
+        "price": 15000
+      }
+    ],
+    "totalAmount": 15000,
+    "status": "confirmed",
+    "bookingReference": "LB-MQFDV2UH",
+    "createdAt": "2026-06-15T15:43:48.521Z"
+  },
+  {
+    "_id": "hrm8zhf3qgtmqfdp3qq",
+    "customerName": "Harshavardhan Reddy Veerupaka",
+    "email": "harshareddyy0307@gmail.com",
+    "phone": "07989856610",
+    "eventDate": "2026-08-19",
+    "eventType": "Portrait Session",
+    "notes": "",
+    "services": [
+      {
+        "serviceId": "h5z2u19yp8bmqfdlvzg",
+        "name": "Portrait Session",
+        "price": 8000
+      }
+    ],
+    "totalAmount": 8000,
+    "status": "confirmed",
+    "bookingReference": "LB-MQFDP3QQ",
+    "createdAt": "2026-06-15T15:39:09.746Z"
+  }
+]

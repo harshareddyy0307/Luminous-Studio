@@ -1,0 +1,26 @@
+[
+  {
+    "_id": "xvi9yxa4homqfng6v1",
+    "name": "Mokshagnya Chepuri",
+    "role": "Lead Photographer",
+    "leaveDays": 2,
+    "attendance": 95,
+    "createdAt": "2026-06-15T20:12:10.045Z"
+  },
+  {
+    "_id": "c6owecxogcomqfng6v2",
+    "name": "Harshavardhan Reddy",
+    "role": "Cinematographer & Drone Pilot",
+    "leaveDays": 1,
+    "attendance": 98,
+    "createdAt": "2026-06-15T20:12:10.046Z"
+  },
+  {
+    "_id": "nxj3qenc5dmqfng6v2",
+    "name": "Kavitha Chelimi",
+    "role": "Senior Photo Editor",
+    "leaveDays": 3,
+    "attendance": 92,
+    "createdAt": "2026-06-15T20:12:10.046Z"
+  }
+]

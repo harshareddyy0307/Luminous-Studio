@@ -1,0 +1,16 @@
+{
+  "short_name": "LuminosBook",
+  "name": "LuminosBook — Studio Portfolio & Booking",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0D0D0D",
+  "theme_color": "#C9A84C",
+  "display": "standalone",
+  "orientation": "portrait"
+}

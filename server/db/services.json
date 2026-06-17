@@ -1,0 +1,104 @@
+[
+  {
+    "_id": "h19uff0phmqfdlvzg",
+    "name": "Wedding Photography",
+    "description": "Complete wedding day coverage with a team of professional photographers capturing every precious moment.",
+    "price": 45000,
+    "category": "wedding",
+    "popular": true,
+    "features": [
+      "Full day coverage (10 hours)",
+      "2 professional photographers",
+      "500+ edited photos",
+      "Online gallery delivery",
+      "Printed photo album (50 pages)",
+      "Drone aerial shots included"
+    ],
+    "createdAt": "2026-06-15T15:36:39.724Z"
+  },
+  {
+    "_id": "rd18xkycmxmqfdlvzg",
+    "name": "Wedding Cinematic Video",
+    "description": "Cinematic wedding film that tells your love story with breathtaking visuals and emotional storytelling.",
+    "price": 35000,
+    "category": "wedding",
+    "popular": true,
+    "features": [
+      "Full day videography",
+      "4K cinematic quality",
+      "10-15 minute highlight film",
+      "Full ceremony & reception film",
+      "Same-day reel for social media",
+      "Background music licensed"
+    ],
+    "createdAt": "2026-06-15T15:36:39.724Z"
+  },
+  {
+    "_id": "kya7letih0dmqfdlvzg",
+    "name": "Birthday Celebration Package",
+    "description": "Capture every laugh, cake cut, and dance move at your birthday celebration in stunning detail.",
+    "price": 15000,
+    "category": "birthday",
+    "popular": false,
+    "features": [
+      "4 hours of coverage",
+      "1 professional photographer",
+      "200+ edited photos",
+      "Online gallery delivery",
+      "Same-day previews (5 photos)",
+      "Candid & posed shots"
+    ],
+    "createdAt": "2026-06-15T15:36:39.724Z"
+  },
+  {
+    "_id": "fuuigct4vxlmqfdlvzg",
+    "name": "Corporate Event Coverage",
+    "description": "Professional documentation of corporate events, conferences, product launches, and team events.",
+    "price": 25000,
+    "category": "corporate",
+    "popular": false,
+    "features": [
+      "8 hours of coverage",
+      "Headshots for up to 20 people",
+      "300+ edited corporate photos",
+      "Quick 48-hour turnaround",
+      "High-res print-ready files",
+      "Commercial usage rights"
+    ],
+    "createdAt": "2026-06-15T15:36:39.724Z"
+  },
+  {
+    "_id": "h5z2u19yp8bmqfdlvzg",
+    "name": "Portrait Session",
+    "description": "Stunning individual or family portrait sessions at your choice of location or our premium studio.",
+    "price": 8000,
+    "category": "portrait",
+    "popular": false,
+    "features": [
+      "2 hours session",
+      "2 outfit changes",
+      "50+ edited portraits",
+      "Indoor/outdoor location",
+      "Digital files included",
+      "Print packages available"
+    ],
+    "createdAt": "2026-06-15T15:36:39.724Z"
+  },
+  {
+    "_id": "1jd2q543a7bhmqfdlvzg",
+    "name": "Pre-Wedding Shoot",
+    "description": "Romantic pre-wedding photo session at a beautiful location to celebrate your upcoming union.",
+    "price": 20000,
+    "category": "wedding",
+    "popular": false,
+    "features": [
+      "6 hours location shoot",
+      "150+ edited photos",
+      "Multiple locations",
+      "Styling guidance provided",
+      "Same-day 10-photo preview",
+      "Engagement album option"
+    ],
+    "createdAt": "2026-06-15T15:36:39.724Z"
+  }
+]

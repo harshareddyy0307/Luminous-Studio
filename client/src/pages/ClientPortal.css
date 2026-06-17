@@ -1,0 +1,192 @@
+.client-auth {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+}
+
+.client-auth__card {
+  width: 100%;
+  max-width: 460px;
+  padding: 36px;
+  background: var(--charcoal-2);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+}
+
+.client-auth__form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.client-auth__error {
+  background: rgba(224, 82, 82, 0.1);
+  border: 1px solid rgba(224, 82, 82, 0.25);
+  color: #e05252;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.client-auth__toggle {
+  background: transparent;
+  border: none;
+  color: var(--gold);
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: all var(--transition);
+}
+
+.client-auth__toggle:hover {
+  color: var(--cream);
+}
+
+/* Portal dashboard */
+.client-portal {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.client-portal__profile {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 28px;
+  background: var(--charcoal-2);
+  border: 1px solid rgba(201, 168, 76, 0.12);
+  border-radius: var(--radius);
+  position: relative;
+  overflow: hidden;
+}
+
+.client-portal__profile-inner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.client-portal__avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(201, 168, 76, 0.1);
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.client-portal__loyalty {
+  padding: 8px 18px;
+  background: rgba(201, 168, 76, 0.05);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  border-radius: var(--radius-sm);
+}
+
+.client-portal__logout {
+  align-self: center;
+}
+
+/* Tabs */
+.client-portal__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.12);
+  padding-bottom: 10px;
+}
+
+.client-portal__tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--silver);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.client-portal__tab:hover {
+  color: var(--cream);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.client-portal__tab.active {
+  color: var(--gold);
+  background: rgba(201, 168, 76, 0.06);
+  border-color: rgba(201, 168, 76, 0.2);
+}
+
+.client-portal__content {
+  padding: 28px;
+  background: var(--charcoal-2);
+  border: 1px solid rgba(251, 251, 251, 0.04);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  min-height: 380px;
+}
+
+/* Photo Portal */
+.photo-portal__unlock {
+  margin-top: 40px;
+}
+
+.photo-portal__card {
+  background: var(--charcoal-3);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+}
+
+.photo-portal__card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(201, 168, 76, 0.2);
+}
+
+/* Checklist checkbox boxes */
+.checkbox-box {
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+
+.checkbox-box.checked {
+  background: rgba(201, 168, 76, 0.1);
+  border-color: var(--gold) !important;
+}
+
+/* Responsive details */
+@media (max-width: 768px) {
+  .client-portal__profile {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+  }
+  .client-portal__logout {
+    width: 100%;
+  }
+  .client-portal__profile-inner {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .client-portal__tab {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}

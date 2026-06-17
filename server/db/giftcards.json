@@ -1,0 +1,16 @@
+[
+  {
+    "_id": "iu9ebis7eefmqfnkimw",
+    "code": "LUM-FTXOKS",
+    "balance": 2000,
+    "expiresAt": "2027-12-31",
+    "createdAt": "2026-06-15T20:15:31.928Z"
+  },
+  {
+    "_id": "uwbj84cb96mqfng6v7",
+    "code": "GIFT5000",
+    "balance": 5000,
+    "expiresAt": "2027-12-31",
+    "createdAt": "2026-06-15T20:12:10.051Z"
+  }
+]

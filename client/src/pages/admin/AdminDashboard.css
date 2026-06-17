@@ -1,0 +1,210 @@
+.admin {
+  display: flex;
+  min-height: 100vh;
+  background: var(--charcoal);
+}
+
+/* Sidebar */
+.admin__sidebar {
+  width: 260px;
+  background: var(--charcoal-2);
+  border-right: 1px solid rgba(201,168,76,0.12);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 500;
+  transition: transform var(--transition);
+}
+
+.admin__sidebar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.admin__logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.3rem;
+}
+
+.admin__sidebar-close {
+  color: var(--silver);
+  font-size: 1.1rem;
+  display: none;
+  transition: var(--transition);
+}
+.admin__sidebar-close:hover { color: var(--gold); }
+
+.admin__user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.admin__user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--charcoal);
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.admin__user-name { font-size: 0.9rem; color: var(--cream); font-weight: 500; }
+.admin__user-role { font-size: 0.72rem; color: var(--silver); text-transform: uppercase; letter-spacing: 0.1em; }
+
+.admin__nav {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 12px;
+  flex: 1;
+  gap: 4px;
+}
+
+.admin__nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--silver);
+  text-decoration: none;
+  transition: var(--transition);
+  border-left: 3px solid transparent;
+}
+.admin__nav-item:hover {
+  background: rgba(201,168,76,0.06);
+  color: var(--cream);
+  border-left-color: rgba(201,168,76,0.3);
+}
+.admin__nav-item--active {
+  background: rgba(201,168,76,0.1);
+  color: var(--gold);
+  border-left-color: var(--gold);
+}
+
+.admin__logout {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  color: var(--silver);
+  transition: var(--transition);
+}
+.admin__logout:hover { color: var(--danger); background: rgba(224,82,82,0.08); }
+
+/* Main */
+.admin__main {
+  flex: 1;
+  margin-left: 260px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin__topbar {
+  height: 64px;
+  background: var(--charcoal-2);
+  border-bottom: 1px solid rgba(201,168,76,0.1);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.admin__menu-btn {
+  color: var(--silver);
+  font-size: 1.2rem;
+  display: none;
+  transition: var(--transition);
+}
+.admin__menu-btn:hover { color: var(--gold); }
+
+.admin__topbar-title {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  color: var(--cream);
+  flex: 1;
+}
+
+.admin__topbar-right { display: flex; gap: 12px; }
+
+.admin__content { padding: 32px; flex: 1; }
+
+.admin__page-title {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  color: var(--cream);
+  margin-bottom: 28px;
+}
+
+/* Overview */
+.admin__stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 36px;
+}
+.admin__stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.admin__stat-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--silver);
+}
+.admin__stat-value { font-family: var(--font-heading); font-size: 2rem; font-weight: 600; }
+
+.admin__quick-links { display: flex; flex-direction: column; gap: 16px; }
+.admin__quick-links h3 { font-family: var(--font-heading); font-size: 1.3rem; color: var(--cream); }
+
+/* Mobile */
+.admin__overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 490;
+  backdrop-filter: blur(4px);
+}
+
+@media (max-width: 900px) {
+  .admin__sidebar {
+    transform: translateX(-100%);
+  }
+  .admin__sidebar--open {
+    transform: translateX(0);
+  }
+  .admin__sidebar-close { display: flex; }
+  .admin__main { margin-left: 0; }
+  .admin__menu-btn { display: flex; }
+  .admin__overlay { display: block; }
+  .admin__stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .admin__content { padding: 20px 16px; }
+}

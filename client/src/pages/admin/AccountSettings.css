@@ -1,0 +1,282 @@
+.account-settings { display: flex; flex-direction: column; gap: 24px; }
+
+.account-settings__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ── Layout ── */
+.account-settings__layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* ── Profile Card ── */
+.account-settings__profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  padding: 32px 24px;
+  position: sticky;
+  top: calc(var(--navbar-height) + 24px);
+}
+
+.account-settings__avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--charcoal);
+  border: 3px solid rgba(201, 168, 76, 0.3);
+  animation: pulse-gold 3s infinite;
+}
+
+.account-settings__profile-name {
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  color: var(--cream);
+}
+
+.account-settings__profile-role {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.account-settings__profile-meta {
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.account-settings__notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
+  padding: 12px;
+  background: rgba(201, 168, 76, 0.05);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  border-radius: var(--radius-sm);
+}
+.account-settings__notice p {
+  font-size: 0.78rem;
+  color: var(--silver);
+  line-height: 1.5;
+}
+
+.account-settings__reset-hint {
+  background: rgba(255, 255, 255, 0.02) !important;
+  text-align: left;
+}
+.account-settings__reset-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.account-settings__reset-hint p {
+  font-size: 0.75rem;
+  color: var(--silver);
+  line-height: 1.6;
+}
+.account-settings__reset-hint code {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--gold-light);
+  font-size: 0.72rem;
+}
+
+/* ── Form Area ── */
+.account-settings__form-area {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── Tabs ── */
+.account-settings__tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+  margin-bottom: -1px;
+}
+
+.account-settings__tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 24px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--silver);
+  border-bottom: 2px solid transparent;
+  transition: var(--transition);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+.account-settings__tab:hover { color: var(--cream); }
+.account-settings__tab--active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+  background: rgba(201, 168, 76, 0.05);
+}
+
+/* ── Form Card ── */
+.account-settings__form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  border-radius: 0 var(--radius-md) var(--radius-md) var(--radius-md);
+  padding: 32px;
+}
+
+.account-settings__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.account-settings__field-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  color: var(--cream);
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.account-settings__hint {
+  font-size: 0.75rem;
+  color: var(--silver);
+  margin-top: 4px;
+  display: block;
+}
+
+/* ── Password input wrap ── */
+.account-settings__pw-wrap { position: relative; }
+.account-settings__pw-wrap .form-input { padding-right: 44px; }
+.account-settings__eye {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--silver);
+  display: flex;
+  transition: var(--transition);
+}
+.account-settings__eye:hover { color: var(--gold); }
+
+/* ── Strength Bar ── */
+.account-settings__strength {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+.account-settings__strength-bar {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.account-settings__strength-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.4s ease, background 0.3s ease;
+}
+.account-settings__strength-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  min-width: 60px;
+  text-align: right;
+}
+
+/* ── Checklist ── */
+.account-settings__checklist {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-sm);
+}
+
+.account-settings__check-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--silver);
+  transition: var(--transition);
+}
+.account-settings__check-item svg { flex-shrink: 0; font-size: 0.85rem; }
+.account-settings__check-item--pass { color: #52C07A; }
+.account-settings__check-item--pass svg { color: #52C07A; }
+
+/* ── Match indicator ── */
+.account-settings__match {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: #52C07A;
+  margin-top: 4px;
+}
+
+/* ── Current password gate ── */
+.account-settings__current-pw {
+  padding: 20px;
+  background: rgba(201, 168, 76, 0.04);
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.account-settings__current-pw-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cream-dim);
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .account-settings__layout {
+    grid-template-columns: 1fr;
+  }
+  .account-settings__profile { position: static; }
+  .account-settings__form { padding: 20px; }
+}

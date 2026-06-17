@@ -1,0 +1,116 @@
+.testimonials {
+  position: relative;
+  overflow: hidden;
+}
+
+.testimonials__carousel {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 24px;
+  position: relative;
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.testimonials__stars {
+  display: flex;
+  gap: 4px;
+}
+.testimonials__star-icon {
+  color: var(--gold);
+}
+.fill-gold {
+  fill: var(--gold);
+}
+
+.testimonials__quote {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--cream);
+  max-width: 620px;
+  margin: 0;
+}
+
+.testimonials__client {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+.testimonials__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(201, 168, 76, 0.1);
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+.testimonials__name {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--cream);
+  font-size: 0.95rem;
+  display: block;
+}
+.testimonials__role {
+  font-size: 0.75rem;
+  color: var(--silver);
+  display: block;
+  margin-top: 2px;
+}
+
+.testimonials__nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+}
+.testimonials__btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--silver);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  cursor: pointer;
+  background: transparent;
+}
+.testimonials__btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(201, 168, 76, 0.05);
+}
+.testimonials__indicator {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--silver);
+  letter-spacing: 0.05em;
+  min-width: 45px;
+}
+
+@media (max-width: 768px) {
+  .testimonials__carousel {
+    padding: 32px 20px;
+    gap: 20px;
+  }
+  .testimonials__quote {
+    font-size: 1.2rem;
+  }
+}

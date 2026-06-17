@@ -1,0 +1,19 @@
+[
+  {
+    "_id": "grzl1909u7lmqfe8mib",
+    "username": "7989856610",
+    "password": "$2b$12$0/tVbcUKXT0GblpaA.YQ7uE3VHcL5FglsEgrdKG.GZAi40kvJSBwy",
+    "createdAt": "2026-06-15T15:54:20.531Z",
+    "updatedAt": "2026-06-15T16:11:23.326Z"
+  },
+  {
+    "_id": "80n39zc1clnmqfnlpey",
+    "username": "harshareddyy0307@gmail.com",
+    "email": "harshareddyy0307@gmail.com",
+    "phone": "7989856610",
+    "fullName": "Harshavardhan Reddy Veerupaka",
+    "password": "$2b$12$j/KEGmLff21jO7K3CRTb0.lqOJnUcT323UPNDcX0p9XLQPpSwtzAG",
+    "role": "customer",
+    "createdAt": "2026-06-15T20:16:27.370Z"
+  }
+]

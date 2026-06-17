@@ -1,0 +1,189 @@
+.page-top { padding-top: var(--navbar-height); }
+
+.portfolio__header {
+  position: relative;
+  padding: 80px 0 60px;
+  overflow: hidden;
+}
+.portfolio__header-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at top, rgba(201,168,76,0.08) 0%, transparent 60%);
+  border-bottom: 1px solid rgba(201,168,76,0.1);
+}
+.portfolio__header .container { position: relative; }
+.portfolio__sub {
+  color: var(--silver);
+  font-size: 1rem;
+  margin-top: 12px;
+  max-width: 500px;
+}
+
+/* Filter tabs */
+.portfolio__filters {
+  position: sticky;
+  top: var(--navbar-height);
+  z-index: 100;
+  background: var(--navbar-bg);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+  padding: 16px 0;
+}
+
+.portfolio__filters-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.portfolio__search-wrap {
+  position: relative;
+  max-width: 320px;
+  width: 100%;
+}
+.portfolio__search-input {
+  width: 100%;
+  background: var(--charcoal-4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50px;
+  color: var(--cream);
+  padding: 10px 18px;
+  font-size: 0.85rem;
+  outline: none;
+  transition: var(--transition);
+}
+.portfolio__search-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.12);
+}
+
+.portfolio__filter-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.portfolio__filter-tabs::-webkit-scrollbar { display: none; }
+
+.portfolio__filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--silver);
+  border: 1px solid rgba(255,255,255,0.1);
+  white-space: nowrap;
+  transition: var(--transition);
+}
+.portfolio__filter-btn:hover {
+  border-color: rgba(201,168,76,0.4);
+  color: var(--cream);
+}
+.portfolio__filter-btn--active {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  border-color: transparent;
+  color: var(--charcoal);
+}
+
+.portfolio__filter-count {
+  background: rgba(255,255,255,0.15);
+  padding: 1px 8px;
+  border-radius: 50px;
+  font-size: 0.7rem;
+}
+.portfolio__filter-btn--active .portfolio__filter-count {
+  background: rgba(0,0,0,0.2);
+}
+
+/* Grid */
+.portfolio__grid {
+  columns: 3;
+  column-gap: 16px;
+}
+
+.portfolio__item {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  margin-bottom: 16px;
+  break-inside: avoid;
+}
+
+.portfolio__item img {
+  width: 100%;
+  display: block;
+  transition: transform var(--transition-slow);
+}
+.portfolio__item:hover img { transform: scale(1.06); }
+
+.portfolio__item-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(13,13,13,0.85) 0%, transparent 55%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 20px;
+  opacity: 0;
+  transition: var(--transition);
+}
+.portfolio__item:hover .portfolio__item-overlay { opacity: 1; }
+
+.portfolio__item-title {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  color: var(--cream);
+}
+.portfolio__item-cat {
+  font-size: 0.7rem;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.portfolio__skeleton {
+  height: 260px;
+  margin-bottom: 16px;
+  break-inside: avoid;
+}
+
+@media (max-width: 1024px) { .portfolio__grid { columns: 2; } }
+@media (max-width: 640px) { .portfolio__grid { columns: 1; } }
+
+.portfolio__fav-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(13, 13, 13, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  z-index: 10;
+}
+.portfolio__fav-btn:hover {
+  transform: scale(1.1);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.portfolio__fav-btn--active {
+  color: #E05252 !important;
+  border-color: #E05252 !important;
+  background: rgba(224, 82, 82, 0.15) !important;
+}
+.portfolio__fav-btn--active svg {
+  fill: #E05252;
+}

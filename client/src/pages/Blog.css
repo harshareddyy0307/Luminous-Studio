@@ -1,0 +1,106 @@
+.blog-page {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.blog-page__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.12);
+  padding-bottom: 10px;
+}
+
+.blog-page__tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--silver);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.blog-page__tab:hover {
+  color: var(--cream);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.blog-page__tab.active {
+  color: var(--gold);
+  background: rgba(201, 168, 76, 0.06);
+  border-color: rgba(201, 168, 76, 0.25);
+}
+
+.blog-page__content {
+  padding: 28px;
+  background: var(--charcoal-2);
+  border: 1px solid rgba(251, 251, 251, 0.04);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  min-height: 380px;
+}
+
+.blog-page__post-card {
+  background: var(--charcoal-3);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+}
+
+.blog-page__post-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(201, 168, 76, 0.2);
+}
+
+.blog-page__detail {
+  padding: 12px;
+}
+
+/* Modal Overlay for Lead Capture */
+.blog-page__modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(5px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.blog-page__modal {
+  position: relative;
+  background: var(--charcoal-2);
+  border: 1px solid var(--gold);
+  padding: 32px;
+  max-width: 440px;
+  width: 100%;
+  border-radius: var(--radius);
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+}
+
+.blog-page__modal-close {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  background: transparent;
+  border: none;
+  color: var(--silver);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.blog-page__modal-close:hover {
+  color: var(--gold);
+}

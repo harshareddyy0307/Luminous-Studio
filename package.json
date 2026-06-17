@@ -1,0 +1,23 @@
+{
+  "name": "luminosbook",
+  "version": "1.0.0",
+  "description": "LuminosBook — Luminos Studio Photography Website",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd server && node server.js",
+    "server:dev": "cd server && nodemon server.js",
+    "client": "cd client && npm run dev",
+    "seed": "cd server && node seed.js",
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install"
+  },
+  "keywords": [
+    "photography",
+    "studio",
+    "booking"
+  ],
+  "author": "Luminos Studio",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

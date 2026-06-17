@@ -1,0 +1,171 @@
+.customer-manager {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.customer-manager__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.12);
+  padding-bottom: 12px;
+}
+
+.customer-manager__tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--silver);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.customer-manager__tab:hover {
+  color: var(--cream);
+  background: rgba(201, 168, 76, 0.04);
+}
+
+.customer-manager__tab--active {
+  color: var(--gold);
+  background: rgba(201, 168, 76, 0.08);
+  border-color: rgba(201, 168, 76, 0.3);
+}
+
+.customer-manager__panel {
+  padding: 24px;
+  background: var(--charcoal-2);
+  border: 1px solid rgba(201, 168, 76, 0.1);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+}
+
+/* Responsive Table Wrapper */
+.admin-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Elegant Table Styling */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.admin-table th {
+  padding: 14px 16px;
+  border-bottom: 2px solid rgba(201, 168, 76, 0.15);
+  color: var(--silver);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+}
+
+.admin-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--cream-dim);
+  vertical-align: middle;
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table tr:hover td {
+  background: rgba(255, 255, 255, 0.01);
+  color: var(--cream);
+}
+
+.admin-table__service-name {
+  font-weight: 500;
+  color: var(--cream);
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.status-badge.status-confirmed {
+  background: rgba(46, 204, 113, 0.1);
+  color: #2ecc71;
+  border: 1px solid rgba(46, 204, 113, 0.2);
+}
+
+.status-badge.status-pending {
+  background: rgba(241, 196, 15, 0.1);
+  color: #f1c40f;
+  border: 1px solid rgba(241, 196, 15, 0.2);
+}
+
+.status-badge.status-cancelled {
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+  border: 1px solid rgba(231, 76, 60, 0.2);
+}
+
+/* Spinner / Loading state */
+.page-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(201, 168, 76, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--gold);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Light theme adaptations if active */
+[data-theme='light'] .customer-manager__panel {
+  background: var(--light-card-bg, #ffffff);
+  border-color: rgba(201, 168, 76, 0.2);
+}
+
+[data-theme='light'] .admin-table th {
+  border-bottom-color: rgba(201, 168, 76, 0.25);
+  color: var(--charcoal);
+}
+
+[data-theme='light'] .admin-table td {
+  border-bottom-color: rgba(0, 0, 0, 0.05);
+  color: var(--charcoal);
+}
+
+[data-theme='light'] .admin-table__service-name {
+  color: var(--charcoal);
+}
+
+[data-theme='light'] .customer-manager__tab:hover {
+  background: rgba(201, 168, 76, 0.08);
+}
