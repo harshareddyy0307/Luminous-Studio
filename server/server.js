@@ -13,7 +13,10 @@ const JWT_SECRET = process.env.JWT_SECRET || 'luminosbook_secret_2024';
 let tempOTPs = {}; // mapping of username -> { otp, user }
 
 // ─── Middleware ────────────────────────────────────────────────────────────────
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+app.use(cors({
+  origin: ['http://localhost:5173', 'https://luminous-studio-harsha.web.app', 'https://luminous-studio-harsha.firebaseapp.com'],
+  credentials: true
+}));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
