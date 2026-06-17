@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-let apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+let apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'https://luminous-studio-backend.onrender.com/api';
 if (apiBaseUrl && !apiBaseUrl.endsWith('/api') && !apiBaseUrl.endsWith('/api/')) {
   apiBaseUrl = apiBaseUrl.replace(/\/$/, '') + '/api';
 }
