@@ -32,7 +32,6 @@ const Navbar = () => {
     { to: '/portfolio', label: 'Portfolio' },
     { to: '/services', label: 'Services' },
     { to: '/tools', label: 'Interactive Tools' },
-    { to: '/portal', label: 'Client Portal' },
   ];
 
   return (
