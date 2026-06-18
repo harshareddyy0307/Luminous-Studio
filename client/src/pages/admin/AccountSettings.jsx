@@ -1,328 +1,388 @@
-import { useState, useEffect } from 'react';
-import {
-  FiUser, FiLock, FiEye, FiEyeOff, FiSave,
-  FiShield, FiCheckCircle, FiAlertCircle, FiRefreshCw
-} from 'react-icons/fi';
+import { useState, useEffect, useRef } from 'react';
+import { FiLock, FiEye, FiEyeOff, FiSave, FiSettings, FiUpload } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api';
 import './AccountSettings.css';
 
-// ─── Password strength scorer ──────────────────────────────────────────────────
-const getStrength = (pw) => {
-  if (!pw) return { score: 0, label: '', color: '' };
-  let score = 0;
-  const checks = {
-    length:    pw.length >= 8,
-    upper:     /[A-Z]/.test(pw),
-    lower:     /[a-z]/.test(pw),
-    number:    /\d/.test(pw),
-    special:   /[@$!%*?&#^()_+]/.test(pw),
-    longEnough: pw.length >= 12,
-  };
-  score = Object.values(checks).filter(Boolean).length;
-
-  if (score <= 2) return { score, label: 'Weak',   color: '#E05252', pct: 20,  checks };
-  if (score <= 3) return { score, label: 'Fair',   color: '#E0A052', pct: 45,  checks };
-  if (score <= 4) return { score, label: 'Good',   color: '#C9A84C', pct: 70,  checks };
-  if (score <= 5) return { score, label: 'Strong', color: '#52C07A', pct: 90,  checks };
-  return             { score, label: 'Excellent', color: '#52C07A', pct: 100, checks };
+const defaultSettings = {
+  logoUrl: '',
+  studioName: 'By Jonathan Studio',
+  bookingTheme: 'Luxury Gold & Black',
+  contactEmail: 'neelasaipranav5@gmail.com',
+  contactPhone: '+91 9618401231',
+  whatsappNumber: '+91 9618401231',
+  notificationEmail: 'neelasaipranav5@gmail.com',
+  studioAddress: '123 Luxury Lane, Hyderabad, India 500081',
+  instagramUrl: 'https://instagram.com',
+  facebookUrl: 'https://facebook.com',
+  twitterUrl: 'https://twitter.com'
 };
 
-const strengthChecks = [
-  { key: 'length',    label: 'At least 8 characters' },
-  { key: 'upper',     label: 'One uppercase letter (A–Z)' },
-  { key: 'lower',     label: 'One lowercase letter (a–z)' },
-  { key: 'number',    label: 'One number (0–9)' },
-  { key: 'special',   label: 'One special character (@$!%*?&#…)' },
-];
-
-// ─── Component ─────────────────────────────────────────────────────────────────
 const AccountSettings = () => {
   const { user, updateUser } = useAuth();
+  
+  // States
+  const [settings, setSettings] = useState(defaultSettings);
+  const [loading, setLoading] = useState(true);
+  const [savingSettings, setSavingSettings] = useState(false);
+  const [savingPassword, setSavingPassword] = useState(false);
 
-  // Profile data from server
-  const [profile, setProfile]   = useState({ username: '', createdAt: '' });
-  const [loadingProfile, setLoadingProfile] = useState(true);
-
-  // Form state
+  // Password fields
   const [currentPassword, setCurrentPassword] = useState('');
-  const [newUsername,     setNewUsername]      = useState('');
-  const [newPassword,     setNewPassword]      = useState('');
-  const [confirmPassword, setConfirmPassword]  = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-  // UI state
-  const [showCurrent, setShowCurrent]   = useState(false);
-  const [showNew,     setShowNew]       = useState(false);
-  const [showConfirm, setShowConfirm]   = useState(false);
-  const [saving,      setSaving]        = useState(false);
-  const [activeTab,   setActiveTab]     = useState('username'); // 'username' | 'password'
+  // Password visibility
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
-  const strength = getStrength(newPassword);
+  const fileInputRef = useRef(null);
 
-  // ─── Load profile ──────────────────────────────────────────────────────────
+  // Load configuration on mount
   useEffect(() => {
-    api.get('/admin/profile')
+    setLoading(true);
+    api.get('/admin/settings')
       .then(({ data }) => {
-        setProfile(data);
-        setNewUsername(data.username);
+        if (data) {
+          // Merge defaults in case fields are missing
+          setSettings({ ...defaultSettings, ...data });
+        }
       })
-      .catch(() => toast.error('Could not load profile'))
-      .finally(() => setLoadingProfile(false));
+      .catch((err) => {
+        console.error('Failed to load settings from server:', err);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
-  // ─── Submit ────────────────────────────────────────────────────────────────
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // Handle Input Changes
+  const handleInputChange = (field, val) => {
+    setSettings(prev => ({ ...prev, [field]: val }));
+  };
 
-    // Validation
-    if (!currentPassword.trim())
-      return toast.error('Please enter your current password to save changes.');
+  // Handle logo file upload (Convert to base64)
+  const handleLogoUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    if (activeTab === 'password') {
-      if (!newPassword)
-        return toast.error('Please enter a new password.');
-      if (newPassword !== confirmPassword)
-        return toast.error('New passwords do not match.');
-      const { checks } = getStrength(newPassword);
-      const required = ['length', 'upper', 'lower', 'number', 'special'];
-      if (!required.every(k => checks[k]))
-        return toast.error('Password does not meet the strength requirements.');
+    if (file.size > 2 * 1024 * 1024) {
+      return toast.error('Logo image size must be less than 2MB.');
     }
 
-    if (activeTab === 'username' && !newUsername.trim())
-      return toast.error('Username cannot be empty.');
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (event.target?.result) {
+        handleInputChange('logoUrl', event.target.result);
+        toast.info('Logo image loaded. Click "Save Settings" below to persist changes.');
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
-    setSaving(true);
+  // Submit Studio Configuration Settings
+  const handleSaveSettings = async (e) => {
+    e.preventDefault();
+    setSavingSettings(true);
     try {
-      const payload = { currentPassword };
-      if (activeTab === 'username') payload.newUsername = newUsername.trim();
-      if (activeTab === 'password') payload.newPassword = newPassword;
+      const { data } = await api.put('/admin/settings', settings);
+      toast.success(data.message || 'Studio configuration saved successfully.');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to save studio configuration.');
+    } finally {
+      setSavingSettings(false);
+    }
+  };
 
+  // Submit Password Change Security Credentials
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    if (!currentPassword.trim()) {
+      return toast.error('Please enter your current password to change it.');
+    }
+    if (!newPassword.trim()) {
+      return toast.error('Please enter your new password.');
+    }
+    if (newPassword !== confirmPassword) {
+      return toast.error('New passwords do not match.');
+    }
+    if (newPassword.length < 8) {
+      return toast.error('Password must be at least 8 characters long.');
+    }
+
+    setSavingPassword(true);
+    try {
+      const payload = {
+        currentPassword,
+        newPassword
+      };
+      // Note: We use the existing credentials endpoint which updates the password
       const { data } = await api.put('/admin/update-credentials', payload);
-
-      // Update stored token + user in AuthContext
+      
+      // Update session token in AuthContext
       updateUser(data.username, data.token);
 
-      setProfile(prev => ({ ...prev, username: data.username }));
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-
-      toast.success(data.message);
+      toast.success('Admin password updated successfully.');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to update credentials.');
     } finally {
-      setSaving(false);
+      setSavingPassword(false);
     }
   };
 
-  if (loadingProfile) {
+  if (loading) {
     return <div className="page-loading"><div className="spinner" /></div>;
   }
 
-  const currentDisplayUsername = profile.username || user?.username || 'admin';
-
   return (
-    <div className="account-settings">
+    <div className="admin-settings-container">
       {/* Header */}
-      <div className="account-settings__header">
-        <div>
-          <h2 className="admin__page-title">Account Settings</h2>
-          <p className="text-silver">Manage your admin credentials securely</p>
-        </div>
+      <div>
+        <h2 className="admin__page-title">Admin Portal Settings</h2>
       </div>
 
-      <div className="account-settings__layout">
-        {/* ── Left: Profile card ── */}
-        <div className="account-settings__profile card">
-          <div className="account-settings__avatar">
-            {currentDisplayUsername[0]?.toUpperCase()}
+      <div className="settings-layout">
+        {/* ── Left: Studio Configuration ── */}
+        <form onSubmit={handleSaveSettings} className="settings-card">
+          <div className="settings-card__header">
+            <FiSettings className="header-icon" /> Studio Configuration
           </div>
-          <div className="account-settings__profile-info">
-            <div className="account-settings__profile-name">{currentDisplayUsername}</div>
-            <div className="account-settings__profile-role">
-              <FiShield size={12} /> Administrator
+
+          {/* Logo preview upload block */}
+          <div className="logo-upload-section">
+            <div className="logo-preview-box">
+              {settings.logoUrl ? (
+                <img src={settings.logoUrl} alt="Studio Logo Preview" />
+              ) : (
+                'No Logo'
+              )}
             </div>
-          </div>
-          {profile.createdAt && (
-            <div className="account-settings__profile-meta text-silver">
-              Account created {new Date(profile.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
-            </div>
-          )}
-
-          <hr className="divider" style={{ margin: '16px 0' }} />
-
-          {/* Security notice */}
-          <div className="account-settings__notice">
-            <FiAlertCircle className="text-gold" />
-            <p>Always use a strong, unique password. After changing credentials, you'll stay logged in with a fresh session token.</p>
-          </div>
-
-
-        </div>
-
-        {/* ── Right: Edit form ── */}
-        <div className="account-settings__form-area">
-          {/* Tabs */}
-          <div className="account-settings__tabs">
-            <button
-              className={`account-settings__tab ${activeTab === 'username' ? 'account-settings__tab--active' : ''}`}
-              onClick={() => setActiveTab('username')}
-              id="tab-username"
-            >
-              <FiUser /> Change Username
-            </button>
-            <button
-              className={`account-settings__tab ${activeTab === 'password' ? 'account-settings__tab--active' : ''}`}
-              onClick={() => setActiveTab('password')}
-              id="tab-password"
-            >
-              <FiLock /> Change Password
-            </button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="card account-settings__form">
-
-            {/* ── Username Tab ── */}
-            {activeTab === 'username' && (
-              <div className="account-settings__fields animate-fade-in">
-                <div className="account-settings__field-heading">
-                  <FiUser className="text-gold" /> Update Username
-                </div>
-                <p className="text-silver" style={{ fontSize: '0.875rem', marginBottom: '8px' }}>
-                  Current username: <strong className="text-cream">{currentDisplayUsername}</strong>
-                </p>
-
-                <div className="form-group">
-                  <label className="form-label" htmlFor="new-username">New Username</label>
-                  <input
-                    id="new-username"
-                    className="form-input"
-                    value={newUsername}
-                    onChange={e => setNewUsername(e.target.value)}
-                    placeholder="Enter new username"
-                    autoComplete="username"
-                    minLength={3}
-                    maxLength={32}
-                  />
-                  <span className="account-settings__hint">3–32 characters</span>
-                </div>
-              </div>
-            )}
-
-            {/* ── Password Tab ── */}
-            {activeTab === 'password' && (
-              <div className="account-settings__fields animate-fade-in">
-                <div className="account-settings__field-heading">
-                  <FiLock className="text-gold" /> Update Password
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label" htmlFor="new-password">New Password</label>
-                  <div className="account-settings__pw-wrap">
-                    <input
-                      id="new-password"
-                      type={showNew ? 'text' : 'password'}
-                      className="form-input"
-                      value={newPassword}
-                      onChange={e => setNewPassword(e.target.value)}
-                      placeholder="Enter new password"
-                      autoComplete="new-password"
-                    />
-                    <button type="button" className="account-settings__eye" onClick={() => setShowNew(v => !v)}>
-                      {showNew ? <FiEyeOff /> : <FiEye />}
-                    </button>
-                  </div>
-
-                  {/* Strength bar */}
-                  {newPassword && (
-                    <div className="account-settings__strength">
-                      <div className="account-settings__strength-bar">
-                        <div
-                          className="account-settings__strength-fill"
-                          style={{ width: `${strength.pct}%`, background: strength.color }}
-                        />
-                      </div>
-                      <span className="account-settings__strength-label" style={{ color: strength.color }}>
-                        {strength.label}
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Checklist */}
-                  {newPassword && (
-                    <ul className="account-settings__checklist">
-                      {strengthChecks.map(c => (
-                        <li key={c.key} className={`account-settings__check-item ${strength.checks?.[c.key] ? 'account-settings__check-item--pass' : ''}`}>
-                          {strength.checks?.[c.key] ? <FiCheckCircle /> : <FiAlertCircle />}
-                          {c.label}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label" htmlFor="confirm-password">Confirm New Password</label>
-                  <div className="account-settings__pw-wrap">
-                    <input
-                      id="confirm-password"
-                      type={showConfirm ? 'text' : 'password'}
-                      className={`form-input ${confirmPassword && confirmPassword !== newPassword ? 'form-input--error' : ''}`}
-                      value={confirmPassword}
-                      onChange={e => setConfirmPassword(e.target.value)}
-                      placeholder="Re-enter new password"
-                      autoComplete="new-password"
-                    />
-                    <button type="button" className="account-settings__eye" onClick={() => setShowConfirm(v => !v)}>
-                      {showConfirm ? <FiEyeOff /> : <FiEye />}
-                    </button>
-                  </div>
-                  {confirmPassword && confirmPassword !== newPassword && (
-                    <span className="form-error">Passwords do not match</span>
-                  )}
-                  {confirmPassword && confirmPassword === newPassword && newPassword && (
-                    <span className="account-settings__match"><FiCheckCircle /> Passwords match</span>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* ── Current password (always required) ── */}
-            <div className="account-settings__current-pw">
-              <div className="account-settings__current-pw-label">
-                <FiShield className="text-gold" />
-                Confirm Your Current Password to Save Changes
-              </div>
-              <div className="account-settings__pw-wrap">
-                <input
-                  id="current-password"
-                  type={showCurrent ? 'text' : 'password'}
-                  className="form-input"
-                  value={currentPassword}
-                  onChange={e => setCurrentPassword(e.target.value)}
-                  placeholder="Enter your current password"
-                  autoComplete="current-password"
+            <div className="logo-actions-box">
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                onChange={handleLogoUpload} 
+                accept="image/*" 
+                style={{ display: 'none' }} 
+              />
+              <button 
+                type="button" 
+                className="logo-upload-btn-label" 
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <FiUpload /> Upload Logo
+              </button>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <input 
+                  type="text" 
+                  className="form-input" 
+                  style={{ fontSize: '0.75rem', padding: '8px 12px' }}
+                  placeholder="Or enter logo URL" 
+                  value={settings.logoUrl} 
+                  onChange={e => handleInputChange('logoUrl', e.target.value)}
                 />
-                <button type="button" className="account-settings__eye" onClick={() => setShowCurrent(v => !v)}>
-                  {showCurrent ? <FiEyeOff /> : <FiEye />}
-                </button>
               </div>
             </div>
+          </div>
 
-            {/* Submit */}
-            <button
-              type="submit"
-              className="btn btn-primary btn-full"
-              disabled={saving}
-              id="save-credentials-btn"
-              style={{ marginTop: '8px' }}
-            >
-              {saving ? 'Saving...' : <><FiSave /> Save Changes</>}
-            </button>
-          </form>
-        </div>
+          <div className="settings-grid-2">
+            <div className="form-group">
+              <label className="form-label">Studio / Website Name</label>
+              <input 
+                className="form-input" 
+                value={settings.studioName} 
+                onChange={e => handleInputChange('studioName', e.target.value)} 
+                required 
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Booking Accents Theme</label>
+              <select 
+                className="form-input" 
+                value={settings.bookingTheme} 
+                onChange={e => handleInputChange('bookingTheme', e.target.value)}
+              >
+                <option value="Luxury Gold & Black">Luxury Gold & Black</option>
+                <option value="Royal Rose & Charcoal">Royal Rose & Charcoal</option>
+                <option value="Ocean Blue & Platinum">Ocean Blue & Platinum</option>
+                <option value="Classic Monochrome">Classic Monochrome</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="settings-grid-3">
+            <div className="form-group">
+              <label className="form-label">Contact Email</label>
+              <input 
+                type="email"
+                className="form-input" 
+                value={settings.contactEmail} 
+                onChange={e => handleInputChange('contactEmail', e.target.value)} 
+                required 
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Contact Phone</label>
+              <input 
+                className="form-input" 
+                value={settings.contactPhone} 
+                onChange={e => handleInputChange('contactPhone', e.target.value)} 
+                required 
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">WhatsApp Number</label>
+              <input 
+                className="form-input" 
+                value={settings.whatsappNumber} 
+                onChange={e => handleInputChange('whatsappNumber', e.target.value)} 
+                required 
+              />
+            </div>
+          </div>
+
+          <div className="settings-grid-2">
+            <div className="form-group">
+              <label className="form-label">Booking Notification Email</label>
+              <input 
+                type="email"
+                className="form-input" 
+                value={settings.notificationEmail} 
+                onChange={e => handleInputChange('notificationEmail', e.target.value)} 
+                required 
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Physical Studio Address</label>
+              <input 
+                className="form-input" 
+                value={settings.studioAddress} 
+                onChange={e => handleInputChange('studioAddress', e.target.value)} 
+                required 
+              />
+            </div>
+          </div>
+
+          <div className="section-subtitle">Social Media Integration</div>
+
+          <div className="settings-grid-3">
+            <div className="form-group">
+              <label className="form-label">Instagram URL</label>
+              <input 
+                className="form-input" 
+                value={settings.instagramUrl} 
+                onChange={e => handleInputChange('instagramUrl', e.target.value)} 
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Facebook URL</label>
+              <input 
+                className="form-input" 
+                value={settings.facebookUrl} 
+                onChange={e => handleInputChange('facebookUrl', e.target.value)} 
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Twitter/X URL</label>
+              <input 
+                className="form-input" 
+                value={settings.twitterUrl} 
+                onChange={e => handleInputChange('twitterUrl', e.target.value)} 
+              />
+            </div>
+          </div>
+
+          <button 
+            type="submit" 
+            className="btn btn-primary btn-gold-action" 
+            style={{ width: '100%', marginTop: '8px' }}
+            disabled={savingSettings}
+          >
+            <FiSave /> {savingSettings ? 'Saving Settings...' : 'Save Settings'}
+          </button>
+        </form>
+
+        {/* ── Right: Security Portal ── */}
+        <form onSubmit={handleChangePassword} className="settings-card">
+          <div className="settings-card__header">
+            <FiLock className="header-icon" /> Security Portal
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Current Password</label>
+            <div className="account-settings__pw-wrap">
+              <input 
+                type={showCurrent ? 'text' : 'password'}
+                className="form-input" 
+                value={currentPassword}
+                onChange={e => setCurrentPassword(e.target.value)}
+                placeholder="Current Password"
+                required
+              />
+              <button 
+                type="button" 
+                className="account-settings__eye" 
+                onClick={() => setShowCurrent(!showCurrent)}
+              >
+                {showCurrent ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+              </button>
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">New Password</label>
+            <div className="account-settings__pw-wrap">
+              <input 
+                type={showNew ? 'text' : 'password'}
+                className="form-input" 
+                value={newPassword}
+                onChange={e => setNewPassword(e.target.value)}
+                placeholder="New Password"
+                required
+              />
+              <button 
+                type="button" 
+                className="account-settings__eye" 
+                onClick={() => setShowNew(!showNew)}
+              >
+                {showNew ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+              </button>
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Confirm New Password</label>
+            <div className="account-settings__pw-wrap">
+              <input 
+                type={showConfirm ? 'text' : 'password'}
+                className="form-input" 
+                value={confirmPassword}
+                onChange={e => setConfirmPassword(e.target.value)}
+                placeholder="Confirm New Password"
+                required
+              />
+              <button 
+                type="button" 
+                className="account-settings__eye" 
+                onClick={() => setShowConfirm(!showConfirm)}
+              >
+                {showConfirm ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+              </button>
+            </div>
+          </div>
+
+          <button 
+            type="submit" 
+            className="btn btn-primary btn-gold-action" 
+            style={{ width: '100%', marginTop: '8px' }}
+            disabled={savingPassword}
+          >
+            {savingPassword ? 'Changing Password...' : 'Change Password'}
+          </button>
+        </form>
       </div>
     </div>
   );
