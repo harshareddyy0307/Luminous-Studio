@@ -123,19 +123,19 @@ const ServiceManager = () => {
                 </div>
                 
                 <div className="service-editor-card__footer">
-                  <div className="switch-container" onClick={() => handleToggleActive(s)}>
-                    <label className="switch">
+                  <label className="switch-container">
+                    <span className="switch">
                       <input 
                         type="checkbox" 
                         checked={s.active !== false} 
-                        onChange={() => {}} // Handled by click of switch-container
+                        onChange={() => handleToggleActive(s)}
                       />
                       <span className="slider"></span>
-                    </label>
-                    <span className="switch-label" style={{ color: s.active !== false ? 'var(--gold)' : 'var(--silver)' }}>
+                    </span>
+                    <span className="switch-label" style={{ color: s.active !== false ? 'var(--gold)' : 'var(--silver)', cursor: 'pointer' }}>
                       {s.active !== false ? 'Active' : 'Inactive'}
                     </span>
-                  </div>
+                  </label>
                   
                   <div className="service-editor-card__actions">
                     <button className="service-editor-card__btn" onClick={() => openEdit(s)} title="Edit Package">
