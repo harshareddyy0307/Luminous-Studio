@@ -563,7 +563,30 @@ app.patch('/api/portfolio/:id/featured', protect, (req, res) => {
 app.get('/api/services', (req, res) => {
   res.json(readDB('services').sort((a, b) => a.price - b.price));
 });
-
+// GET /api/settings — public settings endpoint
+app.get('/api/settings', (req, res) => {
+  try {
+    const settings = readDB('settings');
+    if (settings.length === 0) {
+      const defaultSettings = {
+        _id: 'default_studio_settings',
+        logoUrl: '',
+        studioName: 'By Jonathan Studio',
+        bookingTheme: 'Luxury Gold & Black',
+        contactEmail: 'neelasaipranav5@gmail.com',
+        contactPhone: '+91 9618401231',
+        whatsappNumber: '+91 9618401231',
+        notificationEmail: 'neelasaipranav5@gmail.com',
+        studioAddress: '123 Luxury Lane, Hyderabad, India 500081',
+        instagramUrl: 'https://instagram.com',
+        facebookUrl: 'https://facebook.com',
+        twitterUrl: 'https://twitter.com'
+      };
+      return res.json(defaultSettings);
+    }
+    res.json(settings[0]);
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
 app.get('/api/services/:id', (req, res) => {
   const s = readDB('services').find(s => s._id === req.params.id);
   if (!s) return res.status(404).json({ message: 'Not found' });

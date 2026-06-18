@@ -7,6 +7,13 @@ import './Footer.css';
 
 const Footer = () => {
   const [email, setEmail] = useState('');
+  const [settings, setSettings] = useState(null);
+
+  useEffect(() => {
+    api.get('/settings')
+      .then(({ data }) => setSettings(data))
+      .catch(() => {});
+  }, []);
 
   const handleSubscribe = async (e) => {
     e.preventDefault();
@@ -28,18 +35,25 @@ const Footer = () => {
           {/* Brand */}
           <div className="footer__brand">
             <Link to="/" className="footer__logo">
-              <FiCamera className="footer__logo-icon" />
-              <span>
-                <span className="text-gold">Luminos</span> Studio
-              </span>
+              {settings?.logoUrl ? (
+                <img src={settings.logoUrl} alt={settings.studioName} style={{ height: '36px', objectFit: 'contain' }} />
+              ) : (
+                <>
+                  <FiCamera className="footer__logo-icon" />
+                  <span>
+                    <span className="text-gold">{settings?.studioName ? settings.studioName.split(' ')[0] : 'Luminos'}</span>
+                    {settings?.studioName ? ' ' + settings.studioName.split(' ').slice(1).join(' ') : ' Studio'}
+                  </span>
+                </>
+              )}
             </Link>
             <p className="footer__tagline">
               Crafting timeless memories through the art of light and lens. Every frame tells a story worth preserving forever.
             </p>
             <div className="footer__socials">
-              <a href="#" aria-label="Instagram" className="footer__social"><FiInstagram /></a>
-              <a href="#" aria-label="Facebook" className="footer__social"><FiFacebook /></a>
-              <a href="#" aria-label="YouTube" className="footer__social"><FiYoutube /></a>
+              <a href={settings?.instagramUrl || "#"} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="footer__social"><FiInstagram /></a>
+              <a href={settings?.facebookUrl || "#"} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="footer__social"><FiFacebook /></a>
+              <a href={settings?.twitterUrl || "#"} target="_blank" rel="noopener noreferrer" aria-label="Twitter/X" className="footer__social"><FiYoutube /></a>
             </div>
           </div>
 
@@ -73,15 +87,19 @@ const Footer = () => {
             <ul className="footer__contact">
               <li>
                 <FiMail className="footer__contact-icon" />
-                <a href="mailto:studio@luminosbook.com" className="footer__link">studio@luminosbook.com</a>
+                <a href={`mailto:${settings?.contactEmail || "studio@luminosbook.com"}`} className="footer__link">
+                  {settings?.contactEmail || "studio@luminosbook.com"}
+                </a>
               </li>
               <li>
                 <FiPhone className="footer__contact-icon" />
-                <a href="tel:+919876543210" className="footer__link">+91 98765 43210</a>
+                <a href={`tel:${settings?.contactPhone || "+919876543210"}`} className="footer__link">
+                  {settings?.contactPhone || "+91 98765 43210"}
+                </a>
               </li>
               <li>
                 <FiMapPin className="footer__contact-icon" />
-                <span className="footer__link">Hyderabad, Telangana, India</span>
+                <span className="footer__link">{settings?.studioAddress || "Hyderabad, Telangana, India"}</span>
               </li>
             </ul>
           </div>

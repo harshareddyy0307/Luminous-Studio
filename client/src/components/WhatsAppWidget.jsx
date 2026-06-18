@@ -1,23 +1,42 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FiMessageSquare, FiX, FiSend, FiShare2 } from 'react-icons/fi';
+import api from '../api';
 import './WhatsAppWidget.css';
 
 const WhatsAppWidget = ({ phoneNumber = '+917989856610', studioName = 'Luminos Studio' }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [message, setMessage] = useState(`Hi ${studioName}, I am interested in booking your photography services.`);
+  const [settings, setSettings] = useState(null);
+  
+  useEffect(() => {
+    api.get('/settings')
+      .then(({ data }) => setSettings(data))
+      .catch(() => {});
+  }, []);
+
+  const activePhone = settings?.whatsappNumber || phoneNumber;
+  const activeStudio = settings?.studioName || studioName;
+
+  const [message, setMessage] = useState(`Hi ${activeStudio}, I am interested in booking your photography services.`);
+
+  // Update initial message once settings load
+  useEffect(() => {
+    if (settings?.studioName) {
+      setMessage(`Hi ${settings.studioName}, I am interested in booking your photography services.`);
+    }
+  }, [settings]);
 
   const handleSend = (e) => {
     e.preventDefault();
     if (!message.trim()) return;
-    const url = `https://wa.me/${phoneNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
+    const url = `https://wa.me/${activePhone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
     setMessage('');
     setIsOpen(false);
   };
 
   const shareCurrentPage = () => {
-    const text = `Hi ${studioName}, I am interested in booking your photography services. Check my selection: ${window.location.href}`;
-    const url = `https://wa.me/${phoneNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(text)}`;
+    const text = `Hi ${activeStudio}, I am interested in booking your photography services. Check my selection: ${window.location.href}`;
+    const url = `https://wa.me/${activePhone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
     setIsOpen(false);
   };
@@ -29,9 +48,9 @@ const WhatsAppWidget = ({ phoneNumber = '+917989856610', studioName = 'Luminos S
         <div className="whatsapp-widget__popover glass-card animate-fade-in-scale">
           <div className="whatsapp-widget__header">
             <div className="whatsapp-widget__brand">
-              <div className="whatsapp-widget__avatar">L</div>
+              <div className="whatsapp-widget__avatar">{activeStudio[0]?.toUpperCase()}</div>
               <div>
-                <h4 className="whatsapp-widget__title">{studioName}</h4>
+                <h4 className="whatsapp-widget__title">{activeStudio}</h4>
                 <span className="whatsapp-widget__status">Online • Typically replies in 1hr</span>
               </div>
             </div>
