@@ -90,11 +90,12 @@ const Navbar = () => {
             key={link.to}
             to={link.to}
             className={`navbar__mobile-link ${location.pathname === link.to ? 'navbar__mobile-link--active' : ''}`}
+            onClick={() => setMenuOpen(false)}
           >
             {link.label}
           </Link>
         ))}
-        <Link to="/cart" className="navbar__mobile-link">
+        <Link to="/cart" className="navbar__mobile-link" onClick={() => setMenuOpen(false)}>
           Cart {items.length > 0 && <span className="badge">{items.length}</span>}
         </Link>
       </div>
