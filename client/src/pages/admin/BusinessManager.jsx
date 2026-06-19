@@ -146,10 +146,6 @@ const BusinessManager = () => {
           <h2 className="admin__page-title">Business & Resource Management</h2>
           <p className="text-silver">Track revenue margins, logs, crew listings, and AI generative content suites</p>
         </div>
-        <div className="card text-center" style={{ padding: '8px 16px', background: 'rgba(46,204,113,0.06)', border: '1px solid #2ecc71', borderRadius: '8px' }}>
-          <span style={{ fontSize: '0.72rem', color: 'var(--silver)' }}>OTP 2FA Status</span>
-          <div style={{ color: '#2ecc71', fontWeight: 600, fontSize: '0.88rem' }}>🔒 Active OTP Login</div>
-        </div>
       </div>
 
       {/* KPI Financial row */}
