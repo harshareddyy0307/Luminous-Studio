@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
-import { FiSliders, FiHelpCircle, FiEye, FiCompass, FiCamera, FiMapPin, FiGrid, FiArrowRight, FiInfo } from 'react-icons/fi';
+import { FiSliders, FiHelpCircle, FiEye, FiCamera, FiMapPin, FiGrid, FiArrowRight, FiInfo } from 'react-icons/fi';
 import api from '../api';
 import './InteractiveTools.css';
 
@@ -20,11 +20,7 @@ const addonsList = [
   { id: 'express', name: 'Express 48-Hour Delivery', price: 4000 }
 ];
 
-const studioHotspots = [
-  { id: 1, x: '25%', y: '40%', title: 'Client Consultation Lounge', desc: 'Where we map out event schedules, storyboards, and customization plans with you over coffee.' },
-  { id: 2, x: '55%', y: '65%', title: 'Main Shooting Vault', desc: 'Equipped with professional Godox lighting arrays, modifiers, softboxes, and seamless backdrops.' },
-  { id: 3, x: '80%', y: '30%', title: 'Premium Frame Showcase', desc: 'Touch and feel our handcrafted leather album bindings and solid wood frames.' }
-];
+
 
 const posesStyles = [
   {
@@ -49,7 +45,7 @@ const venuesGuide = [
 
 const InteractiveTools = () => {
   const { addItem } = useCart();
-  const [activeToolTab, setActiveToolTab] = useState('calculator'); // 'calculator' | 'beforeafter' | 'tour' | 'poses'
+  const [activeToolTab, setActiveToolTab] = useState('calculator'); // 'calculator' | 'beforeafter' | 'poses'
   
   // Calculator states
   const [selectedBase, setSelectedBase] = useState(basePackagesList[0]);
@@ -64,8 +60,6 @@ const InteractiveTools = () => {
   // Before After slider position
   const [sliderPos, setSliderPos] = useState(50);
   
-  // Studio walkthrough hotspot active details
-  const [activeHotspot, setActiveHotspot] = useState(null);
   
   // Venue filtering state
   const [venueFilter, setVenueFilter] = useState('all');
@@ -152,9 +146,7 @@ const InteractiveTools = () => {
         <button className={`tools-page__tab ${activeToolTab === 'beforeafter' ? 'active' : ''}`} onClick={() => setActiveToolTab('beforeafter')}>
           <FiEye /> Before / After Showcase
         </button>
-        <button className={`tools-page__tab ${activeToolTab === 'tour' ? 'active' : ''}`} onClick={() => setActiveToolTab('tour')}>
-          <FiCompass /> 360° Studio Tour
-        </button>
+
         <button className={`tools-page__tab ${activeToolTab === 'poses' ? 'active' : ''}`} onClick={() => setActiveToolTab('poses')}>
           <FiCamera /> Pose & Venue Guides
         </button>
@@ -332,55 +324,7 @@ const InteractiveTools = () => {
           </div>
         )}
 
-        {/* 3. 360 WALKTHROUGH TOUR */}
-        {activeToolTab === 'tour' && (
-          <div style={{ maxWidth: '720px', margin: '0 auto', textAlign: 'center' }}>
-            <h3 className="font-heading" style={{ fontSize: '1.3rem', color: 'var(--cream)', marginBottom: '8px' }}>Interactive 360° Studio Tour</h3>
-            <p className="text-silver" style={{ fontSize: '0.85rem', marginBottom: '24px' }}>
-              Explore our physical consulting and photography spaces. Click a hotspot to view details.
-            </p>
 
-            <div style={{ position: 'relative', width: '100%', height: '380px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
-              {/* Panoramic Wide Studio Background */}
-              <img
-                src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200"
-                alt="Studio Wide Tour Panorama"
-                style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.65)' }}
-              />
-
-              {/* Hotspot Dots */}
-              {studioHotspots.map(spot => (
-                <button
-                  key={spot.id}
-                  onClick={() => setActiveHotspot(spot)}
-                  style={{
-                    position: 'absolute',
-                    top: spot.y,
-                    left: spot.x,
-                    width: '24px',
-                    height: '24px',
-                    borderRadius: '50%',
-                    background: 'var(--gold)',
-                    border: '3px solid #fff',
-                    boxShadow: '0 0 12px var(--gold)',
-                    cursor: 'pointer',
-                    animation: 'pulse 1.8s infinite'
-                  }}
-                  aria-label={spot.title}
-                />
-              ))}
-
-              {/* Popup Hotspot details */}
-              {activeHotspot && (
-                <div className="glass-card animate-fade-in-scale" style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', width: '90%', maxWidth: '380px', padding: '16px', background: 'rgba(13,13,13,0.92)', border: '1px solid var(--gold)', borderRadius: '8px', textAlign: 'left' }}>
-                  <h4 style={{ color: 'var(--gold)', fontWeight: 600, fontSize: '0.95rem', marginBottom: '4px' }}>{activeHotspot.title}</h4>
-                  <p style={{ fontSize: '0.8rem', color: 'var(--cream-dim)', lineHeight: '1.5' }}>{activeHotspot.desc}</p>
-                  <button className="btn btn-secondary btn-sm" style={{ marginTop: '8px', padding: '2px 8px', fontSize: '0.72rem' }} onClick={() => setActiveHotspot(null)}>Close</button>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
 
         {/* 4. POSES & VENUE PORTFOLIOS */}
         {activeToolTab === 'poses' && (
