@@ -374,45 +374,6 @@ app.put('/api/admin/update-credentials', protect, async (req, res) => {
   } catch (err) { res.status(500).json({ message: err.message }); }
 });
 
-// GET /api/admin/settings — get studio configuration settings
-app.get('/api/admin/settings', protect, (req, res) => {
-  try {
-    const settings = readDB('settings');
-    // If settings database is empty, return default seeded settings
-    if (settings.length === 0) {
-      const defaultSettings = {
-        _id: 'default_studio_settings',
-        logoUrl: '',
-        studioName: 'By Jonathan Studio',
-        bookingTheme: 'Luxury Gold & Black',
-        contactEmail: 'neelasaipranav5@gmail.com',
-        contactPhone: '+91 9618401231',
-        whatsappNumber: '+91 9618401231',
-        notificationEmail: 'neelasaipranav5@gmail.com',
-        studioAddress: '123 Luxury Lane, Hyderabad, India 500081',
-        instagramUrl: 'https://instagram.com',
-        facebookUrl: 'https://facebook.com',
-        twitterUrl: 'https://twitter.com'
-      };
-      return res.json(defaultSettings);
-    }
-    res.json(settings[0]);
-  } catch (err) { res.status(500).json({ message: err.message }); }
-});
-
-// PUT /api/admin/settings — update studio configuration settings
-app.put('/api/admin/settings', protect, (req, res) => {
-  try {
-    const settings = readDB('settings');
-    const updated = {
-      _id: 'default_studio_settings',
-      ...req.body
-    };
-    writeDB('settings', [updated]);
-    res.json({ message: 'Studio configuration updated successfully.', settings: updated });
-  } catch (err) { res.status(500).json({ message: err.message }); }
-});
-
 // POST /api/admin/reset-password — emergency reset via ADMIN_RESET_SECRET env var
 app.post('/api/admin/reset-password', async (req, res) => {
   try {
@@ -423,11 +384,12 @@ app.post('/api/admin/reset-password', async (req, res) => {
     if (!newPassword)
       return res.status(400).json({ message: 'newPassword is required.' });
     const users = readDB('users');
-    if (users.length === 0) return res.status(404).json({ message: 'No admin user found.' });
-    users[0].password = await bcrypt.hash(newPassword, 12);
-    users[0].updatedAt = new Date().toISOString();
+    const adminUser = users.find(u => u.username.toLowerCase() === 'admin' || u.role === 'admin');
+    if (!adminUser) return res.status(404).json({ message: 'No admin user found.' });
+    adminUser.password = await bcrypt.hash(newPassword, 12);
+    adminUser.updatedAt = new Date().toISOString();
     writeDB('users', users);
-    res.json({ message: `Password reset for user "${users[0].username}". Please log in with your new password.` });
+    res.json({ message: `Password reset for user "${adminUser.username}". Please log in with your new password.` });
   } catch (err) { res.status(500).json({ message: err.message }); }
 });
 
@@ -563,30 +525,7 @@ app.patch('/api/portfolio/:id/featured', protect, (req, res) => {
 app.get('/api/services', (req, res) => {
   res.json(readDB('services').sort((a, b) => a.price - b.price));
 });
-// GET /api/settings — public settings endpoint
-app.get('/api/settings', (req, res) => {
-  try {
-    const settings = readDB('settings');
-    if (settings.length === 0) {
-      const defaultSettings = {
-        _id: 'default_studio_settings',
-        logoUrl: '',
-        studioName: 'By Jonathan Studio',
-        bookingTheme: 'Luxury Gold & Black',
-        contactEmail: 'neelasaipranav5@gmail.com',
-        contactPhone: '+91 9618401231',
-        whatsappNumber: '+91 9618401231',
-        notificationEmail: 'neelasaipranav5@gmail.com',
-        studioAddress: '123 Luxury Lane, Hyderabad, India 500081',
-        instagramUrl: 'https://instagram.com',
-        facebookUrl: 'https://facebook.com',
-        twitterUrl: 'https://twitter.com'
-      };
-      return res.json(defaultSettings);
-    }
-    res.json(settings[0]);
-  } catch (err) { res.status(500).json({ message: err.message }); }
-});
+
 app.get('/api/services/:id', (req, res) => {
   const s = readDB('services').find(s => s._id === req.params.id);
   if (!s) return res.status(404).json({ message: 'Not found' });

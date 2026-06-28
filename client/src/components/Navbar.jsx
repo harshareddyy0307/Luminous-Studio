@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { FiCamera, FiShoppingCart, FiMenu, FiX, FiSun, FiMoon } from 'react-icons/fi';
 import { useCart } from '../context/CartContext';
-import api from '../api';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -12,18 +11,11 @@ const Navbar = () => {
   const location = useLocation();
 
   const [theme, setTheme] = useState(() => localStorage.getItem('luminosTheme') || 'dark');
-  const [settings, setSettings] = useState(null);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('luminosTheme', theme);
   }, [theme]);
-
-  useEffect(() => {
-    api.get('/settings')
-      .then(({ data }) => setSettings(data))
-      .catch(() => {});
-  }, []);
 
   const toggleTheme = () => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
 
@@ -47,17 +39,11 @@ const Navbar = () => {
       <div className="container navbar__inner">
         {/* Logo */}
         <Link to="/" className="navbar__logo">
-          {settings?.logoUrl ? (
-            <img src={settings.logoUrl} alt={settings.studioName} style={{ height: '32px', objectFit: 'contain' }} />
-          ) : (
-            <>
-              <FiCamera className="navbar__logo-icon" />
-              <span>
-                <span className="navbar__logo-luminos">{settings?.studioName ? settings.studioName.split(' ')[0] : 'Luminos'}</span>
-                <span className="navbar__logo-studio">{settings?.studioName ? ' ' + settings.studioName.split(' ').slice(1).join(' ') : ' Studio'}</span>
-              </span>
-            </>
-          )}
+          <FiCamera className="navbar__logo-icon" />
+          <span>
+            <span className="navbar__logo-luminos">Luminos</span>
+            <span className="navbar__logo-studio"> Studio</span>
+          </span>
         </Link>
 
         {/* Desktop links */}
