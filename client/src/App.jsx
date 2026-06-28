@@ -78,7 +78,13 @@ function App() {
             autoClose={3000}
             hideProgressBar={false}
             theme="dark"
-            toastStyle={{ background: 'var(--charcoal-3)', border: '1px solid rgba(201,168,76,0.2)', color: 'var(--cream)' }}
+            toastStyle={{ 
+              background: 'var(--toast-bg)', 
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+              border: '1px solid rgba(201,168,76,0.15)', 
+              color: 'var(--cream)' 
+            }}
           />
         </CartProvider>
       </AuthProvider>
