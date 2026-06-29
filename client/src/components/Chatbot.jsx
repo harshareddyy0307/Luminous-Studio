@@ -88,23 +88,26 @@ const Chatbot = () => {
 
     if (step === 'contact_name') {
       setLead(prev => ({ ...prev, name: text }));
-      addMessage('bot', `Thanks, ${text}! What is your email address? (Must be @gmail.com)`);
+      addMessage('bot', `Thanks, ${text}! What is your Gmail address? (must end in @gmail.com)`);
       setStep('contact_email');
     } else if (step === 'contact_email') {
-      if (!text.toLowerCase().endsWith('@gmail.com')) {
-        addMessage('bot', 'Invalid format. Please enter a valid email ending with @gmail.com:');
+      const emailVal = text.toLowerCase();
+      const isGmail = /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(emailVal);
+      if (!isGmail) {
+        addMessage('bot', `⚠️ That does not look like a valid Gmail address. Please rewrite it ending with @gmail.com (e.g. name@gmail.com):`);
         return;
       }
-      setLead(prev => ({ ...prev, email: text }));
-      addMessage('bot', `Got it. And finally, what is your 10-digit phone number?`);
+      setLead(prev => ({ ...prev, email: emailVal }));
+      addMessage('bot', `Got it. And finally, what is your phone number? (must be exactly 10 digits)`);
       setStep('contact_phone');
     } else if (step === 'contact_phone') {
-      const cleanPhone = text.replace(/\D/g, '');
-      if (cleanPhone.length !== 10) {
-        addMessage('bot', 'Invalid format. Please enter exactly 10 digits for your phone number:');
+      const phoneVal = text.replace(/\s+/g, ''); // strip spaces
+      const is10Digits = /^\d{10}$/.test(phoneVal);
+      if (!is10Digits) {
+        addMessage('bot', `⚠️ Please enter a valid 10-digit phone number (digits only, e.g. 9876543210):`);
         return;
       }
-      const finalLead = { ...lead, phone: cleanPhone };
+      const finalLead = { ...lead, phone: phoneVal };
       setLead(finalLead);
       addMessage('bot', `Saving details...`);
       try {
