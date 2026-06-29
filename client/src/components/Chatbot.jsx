@@ -88,14 +88,23 @@ const Chatbot = () => {
 
     if (step === 'contact_name') {
       setLead(prev => ({ ...prev, name: text }));
-      addMessage('bot', `Thanks, ${text}! What is your email address?`);
+      addMessage('bot', `Thanks, ${text}! What is your email address? (Must be @gmail.com)`);
       setStep('contact_email');
     } else if (step === 'contact_email') {
+      if (!text.toLowerCase().endsWith('@gmail.com')) {
+        addMessage('bot', 'Invalid format. Please enter a valid email ending with @gmail.com:');
+        return;
+      }
       setLead(prev => ({ ...prev, email: text }));
-      addMessage('bot', `Got it. And finally, what is your phone number?`);
+      addMessage('bot', `Got it. And finally, what is your 10-digit phone number?`);
       setStep('contact_phone');
     } else if (step === 'contact_phone') {
-      const finalLead = { ...lead, phone: text };
+      const cleanPhone = text.replace(/\D/g, '');
+      if (cleanPhone.length !== 10) {
+        addMessage('bot', 'Invalid format. Please enter exactly 10 digits for your phone number:');
+        return;
+      }
+      const finalLead = { ...lead, phone: cleanPhone };
       setLead(finalLead);
       addMessage('bot', `Saving details...`);
       try {
