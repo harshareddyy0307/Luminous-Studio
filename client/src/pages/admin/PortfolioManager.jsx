@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { FiTrash2, FiStar, FiUpload, FiX } from 'react-icons/fi';
 import api from '../../api';
 import { toast } from 'react-toastify';
+import ConfirmModal from '../../components/ConfirmModal';
 import './AdminManager.css';
 
 const PortfolioManager = () => {
@@ -13,6 +14,8 @@ const PortfolioManager = () => {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [activeFilter, setActiveFilter] = useState('all');
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState(null);
 
   const load = () => {
     setLoading(true);
@@ -52,13 +55,22 @@ const PortfolioManager = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('Delete this image?')) return;
+  const handleDeleteClick = (id) => {
+    setDeleteTargetId(id);
+    setShowConfirm(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTargetId) return;
     try {
-      await api.delete(`/portfolio/${id}`);
-      setImages(prev => prev.filter(i => i._id !== id));
+      await api.delete(`/portfolio/${deleteTargetId}`);
+      setImages(prev => prev.filter(i => i._id !== deleteTargetId));
       toast.success('Deleted');
     } catch { toast.error('Delete failed'); }
+    finally {
+      setShowConfirm(false);
+      setDeleteTargetId(null);
+    }
   };
 
   const toggleFeatured = async (id) => {
@@ -106,7 +118,7 @@ const PortfolioManager = () => {
                 <button className={`admin-manager__action-btn ${img.featured ? 'admin-manager__action-btn--gold' : ''}`} onClick={() => toggleFeatured(img._id)} title="Toggle featured">
                   <FiStar />
                 </button>
-                <button className="admin-manager__action-btn admin-manager__action-btn--danger" onClick={() => handleDelete(img._id)} title="Delete">
+                <button className="admin-manager__action-btn admin-manager__action-btn--danger" onClick={() => handleDeleteClick(img._id)} title="Delete">
                   <FiTrash2 />
                 </button>
               </div>
@@ -161,6 +173,17 @@ const PortfolioManager = () => {
           </div>
         </div>
       )}
+
+      <ConfirmModal 
+        isOpen={showConfirm}
+        title="Delete Image"
+        message="Are you sure you want to delete this portfolio image? This action will permanently remove it from the gallery."
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setShowConfirm(false)}
+        type="danger"
+      />
     </div>
   );
 };

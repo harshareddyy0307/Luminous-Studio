@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { FiTrash2, FiFilter } from 'react-icons/fi';
 import api from '../../api';
 import { toast } from 'react-toastify';
+import ConfirmModal from '../../components/ConfirmModal';
 
 const statuses = ['all', 'pending', 'confirmed', 'cancelled'];
 
@@ -9,6 +10,8 @@ const BookingManager = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeStatus, setActiveStatus] = useState('all');
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState(null);
 
   const load = (status) => {
     setLoading(true);
@@ -28,13 +31,22 @@ const BookingManager = () => {
     } catch { toast.error('Update failed'); }
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('Delete this booking?')) return;
+  const handleDeleteClick = (id) => {
+    setDeleteTargetId(id);
+    setShowConfirm(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTargetId) return;
     try {
-      await api.delete(`/bookings/${id}`);
-      setBookings(prev => prev.filter(b => b._id !== id));
+      await api.delete(`/bookings/${deleteTargetId}`);
+      setBookings(prev => prev.filter(b => b._id !== deleteTargetId));
       toast.success('Deleted');
     } catch { toast.error('Delete failed'); }
+    finally {
+      setShowConfirm(false);
+      setDeleteTargetId(null);
+    }
   };
 
   return (
@@ -97,7 +109,7 @@ const BookingManager = () => {
                       {b.status !== 'cancelled' && (
                         <button className="btn btn-sm" style={{background:'rgba(224,82,82,0.1)',color:'var(--danger)',border:'1px solid var(--danger)'}} onClick={() => updateStatus(b._id, 'cancelled')} id={`cancel-${b._id}`}>Cancel</button>
                       )}
-                      <button className="btn btn-danger btn-sm" onClick={() => handleDelete(b._id)} id={`delete-booking-${b._id}`}><FiTrash2 /></button>
+                      <button className="btn btn-danger btn-sm" onClick={() => handleDeleteClick(b._id)} id={`delete-booking-${b._id}`}><FiTrash2 /></button>
                     </div>
                   </td>
                 </tr>
@@ -106,6 +118,17 @@ const BookingManager = () => {
           </table>
         </div>
       )}
+
+      <ConfirmModal 
+        isOpen={showConfirm}
+        title="Delete Booking"
+        message="Are you sure you want to delete this booking record? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setShowConfirm(false)}
+        type="danger"
+      />
     </div>
   );
 };

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { FiPlus, FiEdit2, FiTrash2, FiX, FiCheck } from 'react-icons/fi';
 import api from '../../api';
 import { toast } from 'react-toastify';
+import ConfirmModal from '../../components/ConfirmModal';
 import './ServiceManager.css';
 
 const defaultImages = {
@@ -21,6 +22,8 @@ const ServiceManager = () => {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState(null);
 
   const load = () => {
     setLoading(true);
@@ -60,13 +63,22 @@ const ServiceManager = () => {
     finally { setSaving(false); }
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('Delete this service?')) return;
+  const handleDeleteClick = (id) => {
+    setDeleteTargetId(id);
+    setShowConfirm(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTargetId) return;
     try {
-      await api.delete(`/services/${id}`);
-      setServices(prev => prev.filter(s => s._id !== id));
+      await api.delete(`/services/${deleteTargetId}`);
+      setServices(prev => prev.filter(s => s._id !== deleteTargetId));
       toast.success('Deleted');
     } catch { toast.error('Delete failed'); }
+    finally {
+      setShowConfirm(false);
+      setDeleteTargetId(null);
+    }
   };
 
   const handleToggleActive = async (s) => {
@@ -141,7 +153,7 @@ const ServiceManager = () => {
                     <button className="service-editor-card__btn" onClick={() => openEdit(s)} title="Edit Package">
                       <FiEdit2 size={14} />
                     </button>
-                    <button className="service-editor-card__btn service-editor-card__btn--danger" onClick={() => handleDelete(s._id)} title="Delete Package">
+                    <button className="service-editor-card__btn service-editor-card__btn--danger" onClick={() => handleDeleteClick(s._id)} title="Delete Package">
                       <FiTrash2 size={14} />
                     </button>
                   </div>
@@ -208,6 +220,17 @@ const ServiceManager = () => {
           </div>
         </div>
       )}
+
+      <ConfirmModal 
+        isOpen={showConfirm}
+        title="Delete Service Package"
+        message="Are you sure you want to delete this service package? This will permanently remove it from the booking options and catalog."
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setShowConfirm(false)}
+        type="danger"
+      />
     </div>
   );
 };
